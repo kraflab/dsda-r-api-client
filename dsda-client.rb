@@ -2,55 +2,8 @@
 
 require 'net/http'
 require 'json'
-
-class Hash
-  # Returns a hash that includes everything but the given keys.
-  def except(*keys)
-    dup.except!(*keys)
-  end
-
-  # Replaces the hash without the given keys.
-  def except!(*keys)
-    keys.each { |key| delete(key) }
-    self
-  end
-end
-
-# add color to the terminal output
-def colorize(str, color)
-  "#{color}#{str}\e[0m"
-end
-
-def error_color(str)
-  colorize(str, "\e[31m")
-end
-
-def success_color(str)
-  colorize(str, "\e[32m")
-end
-
-def prompt
-  print 'dsda-r: '
-  gets.chomp
-end
-
-# submit and parse request given by uri
-def do_request(uri)
-  print 'Issuing GET request... '
-  res = Net::HTTP.get_response(uri)
-  if res.is_a? Net::HTTPSuccess
-    puts '[ ' + success_color('SUCCESS') + ' ]'
-    res_hash = JSON.parse(res.body)
-    puts JSON.pretty_generate(res_hash.except('error', 'error_message')).gsub(/"/,'')
-    if res_hash['error']
-      puts error_color("Error: #{res_hash['error_message']}")
-    else
-      puts success_color("No errors!")
-    end
-  else
-    '[ ' + error_color('FAIL') + ' ]'
-  end
-end
+require_relative 'lib/extensions'
+require_relative 'lib/helper'
 
 # root api address "http://example.com/api"
 root_uri = ENV["DSDA_API_LOCATION"]
