@@ -34,3 +34,17 @@ def do_request(uri)
     '[ ' + error_color('FAIL') + ' ]'
   end
 end
+
+# split an array of words into subarrays (e.g., commands split by ';')
+def split_array(args, chr)
+  result = []
+  while true
+    cut = args.index { |str| str[-1] == chr }
+    if cut.nil?
+      result.push args
+      return result
+    else
+      result.push args.slice!(0..cut).collect{ |str| str.gsub(chr, '') }
+    end
+  end
+end
