@@ -31,7 +31,7 @@ def do_request(uri)
       puts success_color("No errors!")
     end
   else
-    '[ ' + error_color('FAIL') + ' ]'
+    puts '[ ' + error_color('FAIL') + ' ]'
   end
 end
 
