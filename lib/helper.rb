@@ -28,7 +28,13 @@ end
 # collect an input command
 def prompt
   print 'dsda-r: '
-  gets.chomp
+  # backtrack prompt if input not from command line
+  if (str = gets).nil?
+    print "\r"
+    exit
+  else
+    str.chomp
+  end
 end
 
 # submit and parse request given by uri
