@@ -22,43 +22,9 @@ while (input = prompt) !~ /(exit)|(quit)/
   when 'get'
     case target = args.shift
     when 'wad'
-      case id = args.shift
-      when nil
-        puts error_color("Missing 'get wad' id")
-      else
-        error = false
-        commands = split_array(args, ';')
-        uri = URI(root_uri + "/wads/#{id}")
-        commands.each do |command|
-          case command.shift
-          when 'record'
-            level = command.shift
-            category = command.shift
-            if level and category
-              request_hash[:record] = {level: level, category: category}
-            else
-              puts error_color("Missing record details: 'level' and 'category'")
-              error = true
-            end
-          when 'count'
-            model = command.shift
-            if model
-              request_hash[:count] ||= []
-              request_hash[:count].push model
-            else
-              puts error_color("Missing count detail: 'model'")
-              error = true
-            end
-          else
-            request_hash[:properties] = 'all'
-          end
-        end
-        unless error
-          params = {query: request_hash.to_json}
-          uri.query = URI.encode_www_form(params)
-          do_request(uri)
-        end
-      end
+      parse_wad(args, request_hash, root_uri)
+    when 'player'
+      parse_player(args, request_hash, root_uri)
     when nil
       puts error_color("Missing 'get' target")
     else

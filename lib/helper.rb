@@ -11,6 +11,20 @@ def success_color(str)
   colorize(str, "\e[32m")
 end
 
+# split an array of words into subarrays (e.g., commands split by ';')
+def split_array(args, chr)
+  result = []
+  while true
+    cut = args.index { |str| str[-1] == chr }
+    if cut.nil?
+      result.push args
+      return result
+    else
+      result.push args.slice!(0..cut).collect{ |str| str.gsub(chr, '') }
+    end
+  end
+end
+
 # collect an input command
 def prompt
   print 'dsda-r: '
@@ -35,16 +49,75 @@ def do_request(uri)
   end
 end
 
-# split an array of words into subarrays (e.g., commands split by ';')
-def split_array(args, chr)
-  result = []
-  while true
-    cut = args.index { |str| str[-1] == chr }
-    if cut.nil?
-      result.push args
-      return result
-    else
-      result.push args.slice!(0..cut).collect{ |str| str.gsub(chr, '') }
+# parse wad api actions
+def parse_wad(args, request_hash, root_uri)
+  case id = args.shift
+  when nil
+    puts error_color("Missing 'get wad' id")
+  else
+    error = false
+    commands = split_array(args, ';')
+    uri = URI(root_uri + "/wads/#{URI.escape(id)}")
+    commands.each do |command|
+      case command.shift
+      when 'record'
+        level = command.shift
+        category = command.shift
+        if level and category
+          request_hash[:record] = {level: level, category: category}
+        else
+          puts error_color("Missing record details: 'level' and 'category'")
+          error = true
+        end
+      when 'count'
+        model = command.shift
+        if model
+          request_hash[:count] ||= []
+          request_hash[:count].push model
+        else
+          puts error_color("Missing count detail: 'model'")
+          error = true
+        end
+      else
+        request_hash[:properties] = 'all'
+      end
+    end
+    unless error
+      params = {query: request_hash.to_json}
+      uri.query = URI.encode_www_form(params)
+      do_request(uri)
+    end
+  end
+end
+
+# parse player api actions
+def parse_player(args, request_hash, root_uri)
+  case id = args.shift
+  when nil
+    puts error_color("Missing 'get player' id")
+  else
+    error = false
+    commands = split_array(args, ';')
+    uri = URI(root_uri + "/players/#{URI.escape(id)}")
+    commands.each do |command|
+      case command.shift
+      when 'count'
+        model = command.shift
+        if model
+          request_hash[:count] ||= []
+          request_hash[:count].push model
+        else
+          puts error_color("Missing count detail: 'model'")
+          error = true
+        end
+      else
+        request_hash[:properties] = 'all'
+      end
+    end
+    unless error
+      params = {query: request_hash.to_json}
+      uri.query = URI.encode_www_form(params)
+      do_request(uri)
     end
   end
 end
