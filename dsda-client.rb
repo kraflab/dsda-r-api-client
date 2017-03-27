@@ -2,6 +2,7 @@
 
 require 'net/http'
 require 'json'
+require 'cgi'
 require_relative 'lib/extensions'
 require_relative 'lib/helper'
 
@@ -21,14 +22,12 @@ while (input = prompt) !~ /(exit)|(quit)/
   case req = args.shift
   when 'get'
     case target = args.shift
-    when 'wad'
-      parse_wad(args, request_hash, root_uri)
-    when 'player'
-      parse_player(args, request_hash, root_uri)
+    when 'wad', 'player'
+      parse_commands(args, request_hash, root_uri, "#{target}s")
     when nil
       puts error_color("Missing 'get' target")
     else
-      puts error_color("Unknown get target '#{target}'")
+      puts error_color("Unknown target '#{target}'")
     end
   when nil
   else
