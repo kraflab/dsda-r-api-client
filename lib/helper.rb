@@ -44,7 +44,7 @@ def do_request(uri, query)
   # set api query header
   req = Net::HTTP::Get.new(uri)
   req['API'] = query.to_json
-  res = Net::HTTP.start(uri.hostname, uri.port) {|http|
+  res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) {|http|
     http.request(req)
   }
   
@@ -59,6 +59,7 @@ def do_request(uri, query)
     end
   else
     puts '[ ' + error_color('FAIL') + ' ]'
+    puts res.code
   end
 end
 
