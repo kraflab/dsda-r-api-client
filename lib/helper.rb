@@ -38,9 +38,16 @@ def prompt
 end
 
 # submit and parse request given by uri
-def do_request(uri)
+def do_request(uri, query)
   print 'Issuing GET request... '
-  res = Net::HTTP.get_response(uri)
+  
+  # set api query header
+  req = Net::HTTP::Get.new(uri)
+  req['API'] = query.to_json
+  res = Net::HTTP.start(uri.hostname, uri.port) {|http|
+    http.request(req)
+  }
+  
   if res.is_a? Net::HTTPSuccess
     puts '[ ' + success_color('SUCCESS') + ' ]'
     res_hash = JSON.parse(res.body)
@@ -109,8 +116,8 @@ def parse_commands(args, request_hash, root_uri, target)
       end
     end
     unless error
-      uri = URI(root_uri + "/#{target}/#{CGI::escape(request_hash.to_json)}")
-      do_request(uri)
+      uri = URI(root_uri + "/#{target}/")
+      do_request(uri, request_hash)
     end
   end
 end
