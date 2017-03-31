@@ -100,6 +100,8 @@ def parse_commands(args, request_hash, root_uri, target)
           end
         when 'properties'
           request_hash[:commands][:properties] = 'all'
+        when 'stats'
+          request_hash[:commands][:stats] = 'all'
         else
           puts error_color("Unknown request command #{comm}")
           error = true
