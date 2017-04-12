@@ -38,11 +38,16 @@ def prompt
 end
 
 # submit and parse request given by uri
-def do_request(uri, query)
-  print 'Issuing GET request... '
+def do_request(uri, query, request_type)
+  print "Issuing #{request_type.upcase} request... "
   
   # set api query header
-  req = Net::HTTP::Get.new(uri)
+  req = case request_type
+  when :post
+    Net::HTTP::Post.new(uri)
+  else
+    Net::HTTP::Get.new(uri)
+  end
   req['API'] = query.to_json
   res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) {|http|
     http.request(req)
@@ -66,9 +71,22 @@ end
 # parse api commands
 def parse_commands(args, request_hash, root_uri, target)
   case id = args.shift
+  when '='
+    request_type = :post
+    fields = split_array(args, ':').flatten
+    request_hash[:demo] = {}
+    while !fields.empty?
+      case this_field = fields.shift
+      when 'players'
+        request_hash[:demo][this_field] = fields.shift.split(/,\s+/)
+      end
+    end
+    puts request_hash
   when nil
     puts error_color("Missing id")
+    error = true
   else
+    request_type = :get
     error = false
     commands = split_array(args, ';')
     if id == '?'
@@ -116,9 +134,9 @@ def parse_commands(args, request_hash, root_uri, target)
         end
       end
     end
-    unless error
-      uri = URI(root_uri + "/#{target}/")
-      do_request(uri, request_hash)
-    end
+  end
+  unless error
+    uri = URI(root_uri + "/#{target}/")
+    do_request(uri, request_hash, request_type)
   end
 end
