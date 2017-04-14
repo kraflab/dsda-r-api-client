@@ -20,7 +20,8 @@ def split_array(args, chr)
       result.push args unless args.empty?
       return result
     else
-      result.push args.slice!(0..cut).collect{ |str| str.gsub(chr, '') }
+      args[cut][-1] = ''
+      result.push args.slice!(0..cut)
     end
   end
 end
@@ -79,6 +80,8 @@ def parse_commands(args, request_hash, root_uri, target)
       case this_field = fields.shift
       when 'players'
         request_hash[:demo][this_field] = fields.shift.split(/,\s+/)
+      else
+        request_hash[:demo][this_field] = fields.shift
       end
     end
     puts request_hash
