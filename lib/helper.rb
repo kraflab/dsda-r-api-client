@@ -62,14 +62,14 @@ def do_request(uri, query, request_type)
     end
     if res_hash['error']
       puts error_color("Error: #{res_hash['error_message']}")
-      puts "(#{query})"
+      puts "(#{query.except[:password]})"
     else
       puts success_color("Success!")
     end
   else
     puts '[ ' + error_color('FAIL') + ' ]'
     puts error_color("Error: #{res.code}")
-    puts "(#{query})"
+    puts "(#{query.except[:password]})"
   end
 end
 
