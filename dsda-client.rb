@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'base64'
 require 'net/http'
 require 'json'
 require 'cgi'

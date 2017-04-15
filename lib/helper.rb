@@ -84,6 +84,18 @@ def parse_commands(args, request_hash, root_uri, target)
       case this_field = fields.shift
       when 'players'
         request_hash[:demo][this_field] = fields.shift.split(/,\s+/)
+      when 'file'
+        file_name = fields.shift
+        if File.file? file_name
+          request_hash[:file] = {
+            file_name: file_name,
+            file_data: Base64.encode(File.open(file_name, 'rb').read)
+          }
+        else
+          puts error_color("File not found: #{file_name}")
+          error = true
+          break
+        end
       else
         request_hash[:demo][this_field] = fields.shift
       end
