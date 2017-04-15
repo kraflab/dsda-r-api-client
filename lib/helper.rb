@@ -86,6 +86,7 @@ def parse_commands(args, request_hash, root_uri, target)
         request_hash[:demo][this_field] = fields.shift.split(/,\s+/)
       when 'file'
         file_name = fields.shift
+        next if file_name.empty?
         if File.file? file_name
           request_hash[:file] = {
             file_name: file_name,
