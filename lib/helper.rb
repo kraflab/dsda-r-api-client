@@ -88,9 +88,9 @@ def parse_commands(args, request_hash, root_uri, target)
         file_name = fields.shift
         next if file_name.empty?
         if File.file? file_name
-          request_hash[:file] = {
-            file_name: file_name,
-            file_data: Base64.encode(File.open(file_name, 'rb').read)
+          request_hash[:demo][:file] = {
+            name: file_name.split('/').last,
+            data: Base64.encode64(File.open(file_name, 'rb').read)
           }
         else
           puts error_color("File not found: #{file_name}")
