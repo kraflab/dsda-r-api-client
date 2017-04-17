@@ -57,9 +57,7 @@ def do_request(uri, query, request_type)
   if res.is_a? Net::HTTPSuccess
     puts '[ ' + success_color('SUCCESS') + ' ]'
     res_hash = JSON.parse(res.body)
-    if request_type == :get
-      puts JSON.pretty_generate(res_hash.except('error', 'error_message')).gsub(/"/,'')
-    end
+    puts JSON.pretty_generate(res_hash.except('error', 'error_message')).gsub(/"/,'')
     if res_hash['error']
       puts error_color("Error: #{res_hash['error_message']}")
       puts "(#{query.except[:password]})"
