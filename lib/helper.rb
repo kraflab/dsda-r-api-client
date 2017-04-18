@@ -81,7 +81,11 @@ def parse_commands(args, request_hash, root_uri, target)
     while !fields.empty?
       case this_field = fields.shift
       when 'players'
-        request_hash[:demo][this_field] = fields.shift.split(/,\s+/)
+        request_hash[:demo][this_field] = fields.shift.split(/,\s*/)
+      when 'tags'
+        tag_strings = fields.shift.split(/;\s*/).map { |str| str.split(/,\s*/) }
+        tag_array = tag_strings.map { |ary| {'text' => ary[0], 'style' => ary[1]} }
+        request_hash[:demo][this_field] = tag_array
       when 'file'
         file_name = fields.shift
         next if file_name.empty?
