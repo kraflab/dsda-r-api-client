@@ -60,14 +60,14 @@ def do_request(uri, query, request_type)
     puts JSON.pretty_generate(res_hash.except('error', 'error_message')).gsub(/"/,'')
     if res_hash['error']
       puts error_color("Error: #{res_hash['error_message']}")
-      puts "(#{query.except[:password]})"
+      puts "(#{query.except(:password)})"
     else
       puts success_color("Success!")
     end
   else
     puts '[ ' + error_color('FAIL') + ' ]'
     puts error_color("Error: #{res.code}")
-    puts "(#{query.except[:password]})"
+    puts "(#{query.except(:password)})"
   end
 end
 
