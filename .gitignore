@@ -1,3 +1,5 @@
+err*
 log*
-seed*
+files*
+*.txt
 

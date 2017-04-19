@@ -39,7 +39,7 @@ def prompt
 end
 
 # submit and parse request given by uri
-def do_request(uri, query, request_type)
+def do_request(uri, query, request_type, original)
   print "Issuing #{request_type.upcase} request... "
   
   # set api query header
@@ -54,25 +54,32 @@ def do_request(uri, query, request_type)
     http.request(req)
   }
   
+  query.delete(:password)
+  if query[:demo] and query[:demo][:file]
+    query[:demo][:file].delete(:data)
+  end
+  
   if res.is_a? Net::HTTPSuccess
     puts '[ ' + success_color('SUCCESS') + ' ]'
     res_hash = JSON.parse(res.body)
     puts JSON.pretty_generate(res_hash.except('error', 'error_message')).gsub(/"/,'')
     if res_hash['error']
       puts error_color("Error: #{res_hash['error_message']}")
-      puts "(#{query.except(:password)})"
+      puts "(#{query})"
+      STDERR.puts original
     else
       puts success_color("Success!")
     end
   else
     puts '[ ' + error_color('FAIL') + ' ]'
     puts error_color("Error: #{res.code}")
-    puts "(#{query.except(:password)})"
+    puts "(#{query})"
+    STDERR.puts original
   end
 end
 
 # parse api commands
-def parse_commands(args, request_hash, root_uri, target)
+def parse_commands(args, request_hash, root_uri, target, original)
   case id = args.shift
   when '='
     request_type = :post
@@ -158,6 +165,6 @@ def parse_commands(args, request_hash, root_uri, target)
   end
   unless error
     uri = URI(root_uri + "/#{target}/")
-    do_request(uri, request_hash, request_type)
+    do_request(uri, request_hash, request_type, original)
   end
 end

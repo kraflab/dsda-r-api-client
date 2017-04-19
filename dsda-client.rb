@@ -24,7 +24,7 @@ while (input = prompt) !~ /(exit)|(quit)/
   when 'get'
     case target = args.shift
     when 'wad', 'player'
-      parse_commands(args, request_hash, root_uri, "#{target}s")
+      parse_commands(args, request_hash, root_uri, "#{target}s", input)
     when nil
       puts error_color("Missing 'get' target")
     else
@@ -35,7 +35,7 @@ while (input = prompt) !~ /(exit)|(quit)/
     when 'demo'
       request_hash[:username] = ENV["DSDA_API_USERNAME"]
       request_hash[:password] = ENV["DSDA_API_PASSWORD"]
-      parse_commands(args,request_hash, root_uri, "#{target}s")
+      parse_commands(args,request_hash, root_uri, "#{target}s", input)
     when nil
       puts error_color("Missing 'post' target")
     else
