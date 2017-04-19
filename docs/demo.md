@@ -1,5 +1,11 @@
 ## Demo API
-To create a demo, issue a POST https request to `/api/demos`, with the header `['API']` set to a JSON of the following format.  The response is JSON: a success will yield `response.save = 'Success'` and a `response.demo.id` with the created demo's unique identifier.  Failures will set `response.error` and `response.error_message`.
+To create a demo, issue a POST https request to `/api/demos`,
+with the header `['API']` set to a JSON of the following format.
+The response is JSON: a success will yield `response.save = 'Success'` and
+a `response.demo.id` with the created demo's unique identifier.
+You will also receive a `response.demo.file_id` with the id of an uploaded file,
+for use in demo pack uploads.
+Failures will set `response.error` and `response.error_message`.
 
 ### Demo JSON Example
 ```json
@@ -13,6 +19,7 @@ To create a demo, issue a POST https request to `/api/demos`, with the header `[
       "name": "h1b1-028.zip",
       "data": "UEsDBBQA..."
     },
+    "file_id": "1",
     "version": "0",
     "engine": "Heretic v1.3",
     "wad_username": "heretic",
@@ -37,6 +44,8 @@ To create a demo, issue a POST https request to `/api/demos`, with the header `[
 `guys`: *required*, specifies the number of players **in the game** (i.e., "doomguys").  Two players could work cooperatively on a tas: then you would have two names in the players field, but only one guy in the game.
 
 `file`: *optional*, specifies the demo file information.  Place the file name under `name`, and a `Base64` encoding under `data`.
+
+`file_id`: *optional*, specifies an existing file id rather than an upload (for demo packs).
 
 `version`: *required*, the version of the wad the demo was recorded on, according to the wad's versioning on DSDA (default to 0).
 
