@@ -9,16 +9,13 @@ Failures will set `response.error` and `response.error_message`.
 
 ### Demo JSON Example
 ```json
+header:
 {
   "username": "example_name",
   "password": "example_pass",
   "demo": {
     "tas": "0",
     "guys": "1",
-    "file": {
-      "name": "h1b1-028.zip",
-      "data": "UEsDBBQA..."
-    },
     "file_id": "1",
     "version": "0",
     "engine": "Heretic v1.3",
@@ -31,6 +28,14 @@ Failures will set `response.error` and `response.error_message`.
     "recorded_at": "2002-07-15 20:03:22 -0400",
     "players": ["Vincent Catalaa"],
     "tags": [{"text": "Also reality", "style": "1"}]
+  }
+}
+
+body:
+{
+  "file": {
+    "name": "h1b1-028.zip",
+    "data": "UEsDBBQA..."
   }
 }
 ```
