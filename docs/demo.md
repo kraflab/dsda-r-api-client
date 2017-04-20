@@ -1,15 +1,11 @@
 ## Demo API
 To create a demo, issue a POST https request to `/api/demos`,
 with the headers `['API_USERNAME']` and `['API_PASSWORD']` set, along with the
-body JSON, as shown below.
-The response is JSON: a success will yield `response.save = 'Success'` and
-a `response.demo.id` with the created demo's unique identifier.
-You will also receive a `response.demo.file_id` with the id of an uploaded file,
-for use in demo pack uploads.
-Failures will set `response.error` and `response.error_message`.
+body JSON, as shown below.  An example response is also given.
 
 ### Demo JSON Example
 ```json
+request:
 {
   "demo": {
     "tas": "0",
@@ -31,6 +27,17 @@ Failures will set `response.error` and `response.error_message`.
     "players": ["Vincent Catalaa"],
     "tags": [{"text": "Also reality", "style": "1"}]
   }
+}
+
+response:
+{
+  "save": true,
+  "demo": {
+    "id": 13
+    "file_id": 10
+  }
+  "error": false,
+  "error_message": []
 }
 ```
 
