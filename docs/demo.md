@@ -1,7 +1,7 @@
 ## Demo API
 To create a demo, issue a POST https request to `/api/demos`,
 with the headers `['API_USERNAME']` and `['API_PASSWORD']` set, along with the
-body json, as shown below.
+body JSON, as shown below.
 The response is JSON: a success will yield `response.save = 'Success'` and
 a `response.demo.id` with the created demo's unique identifier.
 You will also receive a `response.demo.file_id` with the id of an uploaded file,
