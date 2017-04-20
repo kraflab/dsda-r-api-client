@@ -1,6 +1,7 @@
 ## Demo API
 To create a demo, issue a POST https request to `/api/demos`,
-with the header `['API']` set to a JSON of the following format.
+with the headers `['API_USERNAME']` and `['API_PASSWORD']` set, along with the
+body json, as shown below.
 The response is JSON: a success will yield `response.save = 'Success'` and
 a `response.demo.id` with the created demo's unique identifier.
 You will also receive a `response.demo.file_id` with the id of an uploaded file,
@@ -9,13 +10,14 @@ Failures will set `response.error` and `response.error_message`.
 
 ### Demo JSON Example
 ```json
-header:
 {
-  "username": "example_name",
-  "password": "example_pass",
   "demo": {
     "tas": "0",
     "guys": "1",
+    "file": {
+      "name": "h1b1-028.zip",
+      "data": "UEsDBBQA..."
+    }
     "file_id": "1",
     "version": "0",
     "engine": "Heretic v1.3",
@@ -28,14 +30,6 @@ header:
     "recorded_at": "2002-07-15 20:03:22 -0400",
     "players": ["Vincent Catalaa"],
     "tags": [{"text": "Also reality", "style": "1"}]
-  }
-}
-
-body:
-{
-  "file": {
-    "name": "h1b1-028.zip",
-    "data": "UEsDBBQA..."
   }
 }
 ```
