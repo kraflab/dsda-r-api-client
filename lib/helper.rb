@@ -49,14 +49,14 @@ def do_request(uri, query, body, request_type, original)
   else
     Net::HTTP::Get.new(uri)
   end
-  req['API'] = query.to_json
+  query.each do |k, v|
+    req[k] = v
+  end
   req.body = body.to_json
   req.content_type = 'application/json'
   res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) {|http|
     http.request(req)
   }
-  
-  query.delete(:password)
   
   if res.is_a? Net::HTTPSuccess
     puts '[ ' + success_color('SUCCESS') + ' ]'
@@ -64,7 +64,6 @@ def do_request(uri, query, body, request_type, original)
     puts JSON.pretty_generate(res_hash.except('error', 'error_message')).gsub(/"/,'')
     if res_hash['error']
       puts error_color("Error: #{res_hash['error_message']}")
-      puts "(#{query})"
       STDERR.puts original
     else
       puts success_color("Success!")
@@ -72,7 +71,6 @@ def do_request(uri, query, body, request_type, original)
   else
     puts '[ ' + error_color('FAIL') + ' ]'
     puts error_color("Error: #{res.code}")
-    puts "(#{query})"
     STDERR.puts original
   end
 end
@@ -84,20 +82,20 @@ def parse_commands(args, request_hash, root_uri, target, original)
   when '='
     request_type = :post
     fields = split_array(args, ':').flatten
-    request_hash[:demo] = {}
+    body_hash[:demo] = {}
     while !fields.empty?
       case this_field = fields.shift
       when 'players'
-        request_hash[:demo][this_field] = fields.shift.split(/,\s*/)
+        body_hash[:demo][this_field] = fields.shift.split(/,\s*/)
       when 'tags'
         tag_strings = fields.shift.split(/;\s*/).map { |str| str.split(/,\s*/) }
         tag_array = tag_strings.map { |ary| {'text' => ary[0], 'style' => ary[1]} }
-        request_hash[:demo][this_field] = tag_array
+        body_hash[:demo][this_field] = tag_array
       when 'file'
         file_name = fields.shift
         next if file_name.empty?
         if File.file? file_name
-          body_hash[:file] = {
+          body_hash[:demo][:file] = {
             name: file_name.split('/').last,
             data: Base64.encode64(File.open(file_name, 'rb').read)
           }
@@ -107,7 +105,7 @@ def parse_commands(args, request_hash, root_uri, target, original)
           break
         end
       else
-        request_hash[:demo][this_field] = fields.shift
+        body_hash[:demo][this_field] = fields.shift
       end
     end
   when nil
@@ -118,14 +116,14 @@ def parse_commands(args, request_hash, root_uri, target, original)
     error = false
     commands = split_array(args, ';')
     if id == '?'
-      request_hash[:mode] = 'random'
+      body_hash[:mode] = 'random'
     else
-      request_hash[:mode] = 'fixed'
-      request_hash[:id] = id
+      body_hash[:mode] = 'fixed'
+      body_hash[:id] = id
     end
-    request_hash[:commands] = {}
+    body_hash[:commands] = {}
     if commands.empty?
-      request_hash[:commands][:properties] = 'all'
+      body_hash[:commands][:properties] = 'all'
     else
       commands.each do |command|
         case comm = command.shift
@@ -137,7 +135,7 @@ def parse_commands(args, request_hash, root_uri, target, original)
             level = command.shift
             category = command.shift
             if level and category
-              request_hash[:commands][:record] = {level: level, category: category}
+              body_hash[:commands][:record] = {level: level, category: category}
             else
               puts error_color("Missing record details: level and category")
               error = true
@@ -146,16 +144,16 @@ def parse_commands(args, request_hash, root_uri, target, original)
         when 'count'
           model = command.shift
           if model
-            request_hash[:commands][:count] ||= []
-            request_hash[:commands][:count].push model
+            body_hash[:commands][:count] ||= []
+            body_hash[:commands][:count].push model
           else
             puts error_color("Missing count detail: model")
             error = true
           end
         when 'properties'
-          request_hash[:commands][:properties] = 'all'
+          body_hash[:commands][:properties] = 'all'
         when 'stats'
-          request_hash[:commands][:stats] = 'all'
+          body_hash[:commands][:stats] = 'all'
         else
           puts error_color("Unknown request command #{comm}")
           error = true
