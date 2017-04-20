@@ -13,7 +13,7 @@ request:
     "file": {
       "name": "h1b1-028.zip",
       "data": "UEsDBBQA..."
-    }
+    },
     "file_id": "1",
     "version": "0",
     "engine": "Heretic v1.3",
@@ -33,9 +33,9 @@ response:
 {
   "save": true,
   "demo": {
-    "id": 13
+    "id": 13,
     "file_id": 10
-  }
+  },
   "error": false,
   "error_message": []
 }
