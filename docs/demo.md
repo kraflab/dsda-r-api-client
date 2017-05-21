@@ -1,6 +1,6 @@
 ## Demo API
 To create a demo, issue a POST https request to `/api/demos`,
-with the headers `['API_USERNAME']` and `['API_PASSWORD']` set, along with the
+with the headers `['API-USERNAME']` and `['API-PASSWORD']` set, along with the
 body JSON, as shown below.  An example response is also given.
 
 ### Demo JSON Example
