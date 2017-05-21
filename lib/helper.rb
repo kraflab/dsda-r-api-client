@@ -41,7 +41,7 @@ end
 # submit and parse request given by uri
 def do_request(uri, query, body, request_type, original)
   print "Issuing #{request_type.upcase} request... "
-  
+
   # set api query header
   req = case request_type
   when :post
@@ -57,7 +57,7 @@ def do_request(uri, query, body, request_type, original)
   res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) {|http|
     http.request(req)
   }
-  
+
   if res.is_a? Net::HTTPSuccess
     puts '[ ' + success_color('SUCCESS') + ' ]'
     res_hash = JSON.parse(res.body)
