@@ -82,20 +82,26 @@ def parse_commands(args, request_hash, root_uri, target, original)
   when '='
     request_type = :post
     fields = split_array(args, ':').flatten
-    body_hash[:demo] = {}
+    model = case target
+      when 'demos'
+        :demo
+      when 'wads'
+        :wad
+      end
+    body_hash[model] = {}
     while !fields.empty?
       case this_field = fields.shift
       when 'players'
-        body_hash[:demo][this_field] = fields.shift.split(/,\s*/)
+        body_hash[model][this_field] = fields.shift.split(/,\s*/)
       when 'tags'
         tag_strings = fields.shift.split(/;\s*/).map { |str| str.split(/,\s*/) }
         tag_array = tag_strings.map { |ary| {'text' => ary[0], 'style' => ary[1]} }
-        body_hash[:demo][this_field] = tag_array
+        body_hash[model][this_field] = tag_array
       when 'file'
         file_name = fields.shift
         next if file_name.empty?
         if File.file? file_name
-          body_hash[:demo][:file] = {
+          body_hash[model][:file] = {
             name: file_name.split('/').last,
             data: Base64.encode64(File.open(file_name, 'rb').read)
           }
@@ -105,7 +111,7 @@ def parse_commands(args, request_hash, root_uri, target, original)
           break
         end
       else
-        body_hash[:demo][this_field] = fields.shift
+        body_hash[model][this_field] = fields.shift
       end
     end
   when nil
