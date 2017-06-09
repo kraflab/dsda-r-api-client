@@ -87,6 +87,8 @@ def parse_commands(args, request_hash, root_uri, target, original)
         :demo
       when 'wads'
         :wad
+      when 'players'
+        :player
       end
     body_hash[model] = {}
     while !fields.empty?
