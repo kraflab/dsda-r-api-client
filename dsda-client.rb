@@ -34,7 +34,7 @@ while (input = prompt) !~ /(exit)|(quit)/
     request_hash['API-USERNAME'] = ENV["DSDA_API_USERNAME"]
     request_hash['API-PASSWORD'] = ENV["DSDA_API_PASSWORD"]
     case target = args.shift
-    when 'demo', 'wad', 'player'
+    when 'demo', 'wad', 'player', 'port'
       parse_commands(args, request_hash, root_uri, "#{target}s", input)
     when nil
       puts error_color("Missing 'post' target")
