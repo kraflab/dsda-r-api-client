@@ -11,6 +11,8 @@ module DsdaClient
       @dump_requests
     end
 
+    private
+
     def dump_requests_option(parser)
       parser.on('--dump-requests', 'Dump requests to stdout instead of sending them') do
         @dump_requests = true
