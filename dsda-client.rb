@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 
-$LOAD_PATH.unshift(File.dirname(__FILE__))
-require 'lib/dsda_client/options'
-require 'lib/dsda_client/api'
-require 'lib/dsda_client/command_parser'
-require 'lib/dsda_client/terminal'
+$LOAD_PATH.unshift(File.dirname(__FILE__).join('/lib'))
+require 'dsda_client/options'
+require 'dsda_client/api'
+require 'dsda_client/command_parser'
+require 'dsda_client/terminal'
 
 options        = DsdaClient::Options.new(ARGV)
 root_uri       = DsdaClient::Api.location

@@ -1,4 +1,4 @@
-require 'lib/dsda_client/terminal'
+require 'dsda_client/terminal'
 
 module DsdaClient
   class Api
