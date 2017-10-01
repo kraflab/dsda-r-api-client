@@ -1,3 +1,5 @@
+require 'json'
+
 # add color to the terminal output
 def colorize(str, color)
   "#{color}#{str}\e[0m"
@@ -76,7 +78,7 @@ def do_request(uri, query, body, request_type, original)
 end
 
 # parse api commands
-def parse_commands(args, request_hash, root_uri, target, original)
+def parse_commands(args, request_hash, root_uri, target, original, options)
   body_hash = {}
   case id = args.shift
   when '='
@@ -172,7 +174,25 @@ def parse_commands(args, request_hash, root_uri, target, original)
     end
   end
   unless error
+    dump_and_exit(body_hash) if options.dump_requests?
     uri = URI(root_uri + "/#{target}/")
     do_request(uri, request_hash, body_hash, request_type, original)
   end
+end
+
+def prune_raw_data!(obj)
+  if obj.is_a?(Hash)
+    obj[:data] = '[pruned]' if obj[:data]
+  end
+  if obj.is_a?(Enumerable)
+    obj.each do |element|
+      prune_raw_data!(element)
+    end
+  end
+end
+
+def dump_and_exit(body)
+  prune_raw_data!(body)
+  puts JSON.pretty_generate(body)
+  exit
 end

@@ -6,6 +6,9 @@ require 'json'
 require 'cgi'
 require_relative 'lib/extensions'
 require_relative 'lib/helper'
+require_relative 'lib/dsda_client/options'
+
+options = DsdaClient::Options.new(ARGV)
 
 # root api address "http://example.com/api"
 root_uri = ENV["DSDA_API_LOCATION"]
@@ -24,7 +27,7 @@ while (input = prompt) !~ /(exit)|(quit)/
   when 'get'
     case target = args.shift
     when 'wad', 'player'
-      parse_commands(args, request_hash, root_uri, "#{target}s", input)
+      parse_commands(args, request_hash, root_uri, "#{target}s", input, options)
     when nil
       puts error_color("Missing 'get' target")
     else
@@ -35,7 +38,7 @@ while (input = prompt) !~ /(exit)|(quit)/
     request_hash['API-PASSWORD'] = ENV["DSDA_API_PASSWORD"]
     case target = args.shift
     when 'demo', 'wad', 'player', 'port'
-      parse_commands(args, request_hash, root_uri, "#{target}s", input)
+      parse_commands(args, request_hash, root_uri, "#{target}s", input, options)
     when nil
       puts error_color("Missing 'post' target")
     else
