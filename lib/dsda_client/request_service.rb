@@ -1,7 +1,7 @@
 require 'net/http'
 require 'json'
-require_relative 'terminal'
-require_relative '../extensions'
+require 'lib/dsda_client/terminal'
+require 'lib/extensions'
 
 module DsdaClient
   class RequestService

@@ -1,7 +1,7 @@
 require 'base64'
 require 'cgi'
-require_relative 'request_service'
-require_relative 'terminal'
+require 'lib/dsda_client/request_service'
+require 'lib/dsda_client/terminal'
 
 module DsdaClient
   class CommandParser

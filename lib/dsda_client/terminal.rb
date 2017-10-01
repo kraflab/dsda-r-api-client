@@ -1,3 +1,5 @@
+require 'lib/dsda_client/api'
+
 module DsdaClient
   class Terminal
     class << self
