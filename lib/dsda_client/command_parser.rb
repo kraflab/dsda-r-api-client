@@ -14,7 +14,7 @@ module DsdaClient
       body_hash = {}
       case id = args.shift
       when '='
-        request_type = :post
+        action = :post
         fields = split_array(args, ':').flatten
         body_hash[model] = {}
         while !fields.empty?
@@ -46,7 +46,7 @@ module DsdaClient
         DsdaClient::Terminal.error("Missing id")
         error = true
       else
-        request_type = :get
+        action = :get
         error = false
         commands = split_array(args, ';')
         if id == '?'
@@ -98,7 +98,7 @@ module DsdaClient
       unless error
         dump_and_exit(body_hash) if @options.dump_requests?
         uri = URI(@root_uri + "/#{model}s/")
-        RequestService.new.request(uri, request_hash, body_hash, request_type, original)
+        RequestService.new.request(uri, request_hash, body_hash, action, original)
       end
     end
 
