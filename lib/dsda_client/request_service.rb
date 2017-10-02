@@ -25,18 +25,18 @@ module DsdaClient
       }
 
       if res.is_a? Net::HTTPSuccess
-        puts '[ ' + success_color('SUCCESS') + ' ]'
+        DsdaClient::Terminal.bracket_success('SUCCESS')
         res_hash = JSON.parse(res.body)
         puts JSON.pretty_generate(res_hash.except('error', 'error_message')).gsub(/"/,'')
         if res_hash['error']
-          puts error_color("Error: #{res_hash['error_message']}")
+          DsdaClient::Terminal.error("Error: #{res_hash['error_message']}")
           STDERR.puts original
         else
-          puts success_color("Success!")
+          DsdaClient::Terminal.success('Success!')
         end
       else
-        puts '[ ' + error_color('FAIL') + ' ]'
-        puts error_color("Error: #{res.code}")
+        DsdaClient::Terminal.bracket_error('FAIL')
+        DsdaClient::Terminal.error("Error: #{res.code}")
         STDERR.puts original
       end
     end

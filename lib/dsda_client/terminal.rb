@@ -47,8 +47,20 @@ module DsdaClient
         end
       end
 
+      def success(msg)
+        puts success_colorize(msg)
+      end
+
       def error(msg)
         puts error_colorize(msg)
+      end
+
+      def bracket_success(msg)
+        puts "[ #{success_colorize(msg)} ]"
+      end
+
+      def bracket_error(msg)
+        puts "[ #{error_colorize(msg)} ]"
       end
 
       private
