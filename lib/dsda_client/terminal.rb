@@ -2,27 +2,30 @@ require 'dsda_client/api'
 
 module DsdaClient
   class Terminal
+    GET_MODELS = %w[wad player]
+    POST_MODELS = %w[demo wad player port]
+
     class << self
       def run(command_parser)
         print_opening_info
         while (input = prompt) !~ /(exit)|(quit)/
           args = input.scan(/".*?"|[^\s"]+/).collect { |i| i.gsub(/"/, '') }
           request_hash = {}
-          case req = args.shift
+          case action = args.shift
           when 'get'
             case model = args.shift
-            when 'wad', 'player'
+            when *GET_MODELS
               command_parser.parse(args, request_hash, model, input)
             when nil
               error("Missing 'get' model")
             else
-            error("Unknown model '#{model}'")
+              error("Unknown model '#{model}'")
             end
           when 'post'
             request_hash['API-USERNAME'] = DsdaClient::Api.username
             request_hash['API-PASSWORD'] = DsdaClient::Api.password
             case model = args.shift
-            when 'demo', 'wad', 'player', 'port'
+            when *POST_MODELS
               command_parser.parse(args, request_hash, model, input)
             when nil
               error("Missing 'post' model")
@@ -31,7 +34,7 @@ module DsdaClient
             end
           when nil
           else
-            error("Unknown request type '#{req}'")
+            error("Unknown action '#{action}'")
           end
         end
       end
