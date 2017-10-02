@@ -10,22 +10,12 @@ module DsdaClient
       @options = options
     end
 
-    def parse(args, request_hash, target, original)
+    def parse(args, request_hash, model, original)
       body_hash = {}
       case id = args.shift
       when '='
         request_type = :post
         fields = split_array(args, ':').flatten
-        model = case target
-          when 'demos'
-            :demo
-          when 'wads'
-            :wad
-          when 'players'
-            :player
-          when 'ports'
-            :port
-          end
         body_hash[model] = {}
         while !fields.empty?
           case this_field = fields.shift
@@ -72,8 +62,8 @@ module DsdaClient
           commands.each do |command|
             case comm = command.shift
             when 'record'
-              if target != 'wads'
-                DsdaClient::Terminal.error("Invalid command record for #{target}")
+              if model != 'wad'
+                DsdaClient::Terminal.error("Invalid command record for #{model}")
                 error = true
               else
                 level = command.shift
@@ -86,10 +76,10 @@ module DsdaClient
                 end
               end
             when 'count'
-              model = command.shift
-              if model
+              sub_model = command.shift
+              if sub_model
                 body_hash[:commands][:count] ||= []
-                body_hash[:commands][:count].push model
+                body_hash[:commands][:count].push sub_model
               else
                 DsdaClient::Terminal.error("Missing count detail: model")
                 error = true
@@ -107,7 +97,7 @@ module DsdaClient
       end
       unless error
         dump_and_exit(body_hash) if @options.dump_requests?
-        uri = URI(@root_uri + "/#{target}/")
+        uri = URI(@root_uri + "/#{model}s/")
         RequestService.new.request(uri, request_hash, body_hash, request_type, original)
       end
     end

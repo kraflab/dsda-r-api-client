@@ -10,24 +10,24 @@ module DsdaClient
           request_hash = {}
           case req = args.shift
           when 'get'
-            case target = args.shift
+            case model = args.shift
             when 'wad', 'player'
-              command_parser.parse(args, request_hash, "#{target}s", input)
+              command_parser.parse(args, request_hash, model, input)
             when nil
-              error("Missing 'get' target")
+              error("Missing 'get' model")
             else
-            error("Unknown target '#{target}'")
+            error("Unknown model '#{model}'")
             end
           when 'post'
             request_hash['API-USERNAME'] = DsdaClient::Api.username
             request_hash['API-PASSWORD'] = DsdaClient::Api.password
-            case target = args.shift
+            case model = args.shift
             when 'demo', 'wad', 'player', 'port'
-              command_parser.parse(args, request_hash, "#{target}s", input)
+              command_parser.parse(args, request_hash, model, input)
             when nil
-              error("Missing 'post' target")
+              error("Missing 'post' model")
             else
-              error("Unknown target '#{target}'")
+              error("Unknown model '#{model}'")
             end
           when nil
           else
