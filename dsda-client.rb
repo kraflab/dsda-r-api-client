@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-$LOAD_PATH.unshift(File.dirname(__FILE__).join('/lib'))
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), 'lib'))
 require 'dsda_client/options'
 require 'dsda_client/api'
 require 'dsda_client/command_parser'
