@@ -8,7 +8,7 @@ module DsdaClient
     def request(uri, query, body, action, original)
       print "Issuing #{action.upcase} request... "
 
-      request = request_for_action(action)
+      request = request_for_action(action, uri)
       merge_into_header(request, query)
       request.body = body.to_json
       request.content_type = 'application/json'
@@ -35,7 +35,7 @@ module DsdaClient
 
     private
 
-    def request_for_action(action)
+    def request_for_action(action, uri)
       case action
       when :post
         Net::HTTP::Post.new(uri)
