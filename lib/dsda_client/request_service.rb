@@ -5,35 +5,51 @@ require 'extensions'
 
 module DsdaClient
   class RequestService
+    CONTENT_TYPE = 'application/json'.freeze
+
     def request(uri, query, body, action, original)
-      print "Issuing #{action.upcase} request... "
-
-      request = request_for_action(action, uri)
-      merge_into_header(request, query)
-      request.body = body.to_json
-      request.content_type = 'application/json'
-      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
-        http.request(request)
-      end
-
+      response = make_request(uri, query, body, action)
       if response.is_a? Net::HTTPSuccess
-        DsdaClient::Terminal.bracket_success('SUCCESS')
-        response_hash = JSON.parse(response.body)
-        puts JSON.pretty_generate(response_hash.except('error', 'error_message')).gsub(/"/,'')
-        if response_hash['error']
-          DsdaClient::Terminal.error("Error: #{response_hash['error_message']}")
-          STDERR.puts original
-        else
-          DsdaClient::Terminal.success('Success!')
-        end
+        request_success(response, original)
       else
-        DsdaClient::Terminal.bracket_error('FAIL')
-        DsdaClient::Terminal.error("Error: #{response.code}")
-        STDERR.puts original
+        request_failure(original)
       end
     end
 
     private
+
+    def response_error(response_hash, original)
+      DsdaClient::Terminal.error("Error: #{response_hash['error_message']}")
+      DsdaClient::Terminal.log_error(original)
+    end
+
+    def request_success(response, original)
+      response_hash = JSON.parse(response.body)
+      DsdaClient::Terminal.bracket_success('SUCCESS')
+      DsdaClient::Terminal.pretty_json(response_hash.except('error', 'error_message'))
+      if response_hash['error']
+        response_error(response_hash, original)
+      else
+        DsdaClient::Terminal.success('Success!')
+      end
+    end
+
+    def request_failure(original)
+      DsdaClient::Terminal.bracket_error('FAIL')
+      DsdaClient::Terminal.error("Error: #{response.code}")
+      DsdaClient::Terminal.log_error(original)
+    end
+
+    def make_request(uri, query, body, action)
+      print "Issuing #{action.upcase} request... "
+      request = request_for_action(action, uri)
+      merge_into_header(request, query)
+      request.body = body.to_json
+      request.content_type = CONTENT_TYPE
+      Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+        http.request(request)
+      end
+    end
 
     def request_for_action(action, uri)
       case action

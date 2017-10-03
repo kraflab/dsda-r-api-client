@@ -1,9 +1,10 @@
+require 'json'
 require 'dsda_client/api'
 
 module DsdaClient
   class Terminal
-    GET_MODELS = %w[wad player]
-    POST_MODELS = %w[demo wad player port]
+    GET_MODELS = %w[wad player].freeze
+    POST_MODELS = %w[demo wad player port].freeze
 
     class << self
       def run(command_parser)
@@ -58,12 +59,20 @@ module DsdaClient
         puts error_colorize(msg)
       end
 
+      def log_error(msg)
+        STDERR.puts msg
+      end
+
       def bracket_success(msg)
         puts "[ #{success_colorize(msg)} ]"
       end
 
       def bracket_error(msg)
         puts "[ #{error_colorize(msg)} ]"
+      end
+
+      def pretty_json(hash)
+        puts JSON.pretty_generate(hash).gsub(/"/,'')
       end
 
       private
