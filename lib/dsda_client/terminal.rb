@@ -3,8 +3,10 @@ require 'dsda_client/api'
 
 module DsdaClient
   class Terminal
-    GET_MODELS = %w[wad player].freeze
-    POST_MODELS = %w[demo wad player port].freeze
+    ALLOWED_MODELS = {
+      'get'  => %w[wad player],
+      'post' => %w[demo wad player port]
+    }.freeze
 
     class << self
       def run(command_parser)
@@ -12,30 +14,15 @@ module DsdaClient
         while (input = prompt) !~ /(exit)|(quit)/
           args = input.scan(/".*?"|[^\s"]+/).collect { |i| i.gsub(/"/, '') }
           request_hash = {}
-          case action = args.shift
-          when 'get'
-            case model = args.shift
-            when *GET_MODELS
-              command_parser.parse(args, request_hash, model, input)
-            when nil
-              error("Missing 'get' model")
-            else
-              error("Unknown model '#{model}'")
-            end
-          when 'post'
-            request_hash['API-USERNAME'] = DsdaClient::Api.username
-            request_hash['API-PASSWORD'] = DsdaClient::Api.password
-            case model = args.shift
-            when *POST_MODELS
-              command_parser.parse(args, request_hash, model, input)
-            when nil
-              error("Missing 'post' model")
-            else
-              error("Unknown model '#{model}'")
-            end
-          when nil
-          else
+          action = args.shift
+          model = args.shift
+          if ALLOWED_MODELS[action] && ALLOWED_MODELS[action].include?(model)
+            merge_api_credentials(request_hash) if action == 'post'
+            command_parser.parse(args, request_hash, model, input)
+          elsif ALLOWED_MODELS[action].nil?
             error("Unknown action '#{action}'")
+          else
+            error("Unknown model '#{model}'")
           end
         end
       end
@@ -76,6 +63,11 @@ module DsdaClient
       end
 
       private
+
+      def merge_api_credentials(request_hash)
+        request_hash['API-USERNAME'] = DsdaClient::Api.username
+        request_hash['API-PASSWORD'] = DsdaClient::Api.password
+      end
 
       def colorize(str, color)
         "#{color}#{str}\e[0m"
