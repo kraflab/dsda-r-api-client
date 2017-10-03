@@ -7,6 +7,10 @@ module DsdaClient
   class RequestService
     CONTENT_TYPE = 'application/json'.freeze
 
+    def initialize(options)
+      @options = options
+    end
+
     def request(uri, query, body, action, original)
       response = make_request(uri, query, body, action)
       if response.is_a? Net::HTTPSuccess
@@ -46,7 +50,7 @@ module DsdaClient
       merge_into_header(request, query)
       request.body = body.to_json
       request.content_type = CONTENT_TYPE
-      Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+      Net::HTTP.start(uri.hostname, uri.port, use_ssl: @options.production?) do |http|
         http.request(request)
       end
     end

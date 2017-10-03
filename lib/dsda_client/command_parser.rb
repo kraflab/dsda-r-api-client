@@ -98,7 +98,7 @@ module DsdaClient
       unless error
         dump_and_exit(body_hash) if @options.dump_requests?
         uri = URI(@root_uri + "/#{model}s/")
-        RequestService.new.request(uri, request_hash, body_hash, action, original)
+        RequestService.new(@options).request(uri, request_hash, body_hash, action, original)
       end
     end
 

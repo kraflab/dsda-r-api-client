@@ -2,6 +2,12 @@ require 'spec_helper'
 require 'dsda_client/api'
 
 RSpec.describe DsdaClient::Api do
+  let(:production_options) { double(production?: true) }
+
+  before do
+    described_class.setup(production_options)
+  end
+
   describe '.key' do
     context 'key not found' do
       it 'raises error' do
@@ -13,6 +19,16 @@ RSpec.describe DsdaClient::Api do
       it 'returns the environment key' do
         ENV["DSDA_API_SOMETHING"] = 'something'
         expect(described_class.something).to eq('something')
+      end
+
+      context 'development environment' do
+        let(:development_options) { double(production?: false) }
+
+        it 'returns the development environment key' do
+          described_class.setup(development_options)
+          ENV['DSDA_API_DEV_SOMETHING'] = 'dev_something'
+          expect(described_class.something).to eq('dev_something')
+        end
       end
     end
   end
