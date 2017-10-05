@@ -11,8 +11,8 @@ module DsdaClient
       @options = options
     end
 
-    def request(uri, query, body, action, original)
-      response = make_request(uri, query, body, action)
+    def request(uri, query, body)
+      response = make_request(uri, query, body)
       if response.is_a? Net::HTTPSuccess
         request_success(response, original)
       else
@@ -44,9 +44,9 @@ module DsdaClient
       DsdaClient::Terminal.log_error(original)
     end
 
-    def make_request(uri, query, body, action)
+    def make_request(uri, query, body)
       print "Issuing #{action.upcase} request... "
-      request = request_for_action(action, uri)
+      request = request_for_uri(uri)
       merge_into_header(request, query)
       request.body = body.to_json
       request.content_type = CONTENT_TYPE
@@ -55,9 +55,8 @@ module DsdaClient
       end
     end
 
-    def request_for_action(action, uri)
-      case action
-      when :post
+    def request_for_uri(uri)
+      if @options.post?
         Net::HTTP::Post.new(uri)
       else
         Net::HTTP::Get.new(uri)

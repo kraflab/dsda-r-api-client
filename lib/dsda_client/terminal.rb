@@ -3,38 +3,23 @@ require 'dsda_client/api'
 
 module DsdaClient
   class Terminal
-    ALLOWED_MODELS = {
-      'get'  => %w[wad player],
-      'post' => %w[demo wad player port]
-    }.freeze
+    ALLOWED_MODELS = %w[demo wad player port].freeze
 
     class << self
-      def run(command_parser)
-        print_opening_info
-        while (input = prompt) !~ /(exit)|(quit)/
-          args = input.scan(/".*?"|[^\s"]+/).collect { |i| i.gsub(/"/, '') }
-          request_hash = {}
-          action = args.shift
-          model = args.shift
-          if ALLOWED_MODELS[action] && ALLOWED_MODELS[action].include?(model)
-            merge_api_credentials(request_hash) if action == 'post'
-            command_parser.parse(args, request_hash, model, input)
-          elsif ALLOWED_MODELS[action].nil?
-            error("Unknown action '#{action}'")
-          else
+      def run(command_parser, options)
+        request_hash = {}
+        merge_api_credentials(request_hash) if options.post?
+        entire_hash = JSON.parse(ARGF.read)
+        entire_hash.each do |model, batch|
+          make_singular(model)
+          if !ALLOWED_MODELS.include?(model)
             error("Unknown model '#{model}'")
+          else
+            batch = arrayify(batch)
+            batch.each do |instance|
+              command_parser.parse(instance, request_hash, model)
+            end
           end
-        end
-      end
-
-      def prompt
-        print 'dsda-r: '
-        # backtrack prompt if input not from command line
-        if (str = gets).nil?
-          print "\r"
-          exit
-        else
-          str.chomp
         end
       end
 
@@ -46,8 +31,9 @@ module DsdaClient
         puts error_colorize(msg)
       end
 
-      def log_error(msg)
-        STDERR.puts msg
+      def log_error(obj)
+        prune_raw_data!(obj)
+        STDERR.puts JSON.pretty_generate(obj)
       end
 
       def bracket_success(msg)
@@ -64,6 +50,27 @@ module DsdaClient
 
       private
 
+      def prune_raw_data!(obj)
+        if obj.is_a?(Hash)
+          obj[:data] = '[pruned]' if obj[:data]
+        end
+        if obj.is_a?(Enumerable)
+          obj.each do |element|
+            prune_raw_data!(element)
+          end
+        end
+      end
+
+      def make_singular(model)
+        if model.is_a?(String) && model.length > 1 && model[-1] == 's'
+          model = model.slice(0, model.length - 1)
+        end
+      end
+
+      def arrayify(batch)
+        batch.is_a?(Array) ? batch : [batch]
+      end
+
       def merge_api_credentials(request_hash)
         request_hash['API-USERNAME'] = DsdaClient::Api.username
         request_hash['API-PASSWORD'] = DsdaClient::Api.password
@@ -79,12 +86,6 @@ module DsdaClient
 
       def success_colorize(str)
         colorize(str, "\e[32m")
-      end
-
-      def print_opening_info
-        puts "=> Starting DSDA API Client"
-        puts "=> Using ruby #{RUBY_VERSION}"
-        puts "=> Enter 'exit' or 'quit' to close the client"
       end
     end
   end

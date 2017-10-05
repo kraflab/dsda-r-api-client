@@ -5,6 +5,7 @@ module DsdaClient
     def initialize(args)
       @dump_requests = false
       @production = true
+      @request = nil
       parse(args)
     end
 
@@ -16,6 +17,10 @@ module DsdaClient
       @production
     end
 
+    def post?
+      @request == :post
+    end
+
     private
 
     def dump_requests_option(parser)
@@ -24,9 +29,15 @@ module DsdaClient
       end
     end
 
-    def development_options(parser)
+    def development_option(parser)
       parser.on('--local', 'Make requests to local development environment') do
         @production = false
+      end
+    end
+
+    def post_option(parser)
+      parser.on('--post', 'Supplied data will be posted') do
+        @request = :post
       end
     end
 
@@ -41,7 +52,8 @@ module DsdaClient
       OptionParser.new do |parser|
         parser.banner = "Usage: dsda-client.rb [options]"
         dump_requests_option(parser)
-        development_options(parser)
+        development_option(parser)
+        post_option(parser)
         help_option(parser)
       end.parse!(args)
     end
