@@ -1,13 +1,43 @@
 require 'base64'
 require 'cgi'
 require 'dsda_client/request_service'
+require 'dsda_client/api'
 require 'dsda_client/terminal'
 
 module DsdaClient
   class CommandParser
+    ALLOWED_MODELS = %w[demo wad player port].freeze
+
     def initialize(root_uri, options)
       @root_uri = root_uri
       @options = options
+    end
+
+    def parse(data_hash)
+      generate_request_hash
+      data_hash.each do |model, batch|
+        make_singular(model)
+        if !ALLOWED_MODELS.include?(model)
+          DsdaClient::Terminal.error("Unknown model '#{model}'")
+        else
+          batch = arrayify(batch)
+          batch.each do |instance|
+            parse_instance(instance, model)
+          end
+        end
+      end
+    end
+
+    private
+
+    def generate_request_hash
+      @request_hash = {}
+      merge_api_credentials if @options.post?
+    end
+
+    def merge_api_credentials
+      @request_hash['API-USERNAME'] = DsdaClient::Api.username
+      @request_hash['API-PASSWORD'] = DsdaClient::Api.password
     end
 
     PLAYER_REQUIRED_KEYS = [
@@ -17,6 +47,11 @@ module DsdaClient
     PLAYER_ALLOWED_KEYS = ([
       'username'
     ] + PLAYER_REQUIRED_KEYS).freeze
+
+    def valid_player?(raw_hash)
+      raw_hash = raw_hash.slice(PLAYER_ALLOWED_KEYS)
+      raw_hash.includes_all?(PLAYER_REQUIRED_KEYS)
+    end
 
     DEMO_REQUIRED_KEYS = [
       'tas',
@@ -36,11 +71,6 @@ module DsdaClient
     DEMO_ALLOWED_KEYS = ([
       'tags'
     ] + DEMO_REQUIRED_KEYS).freeze
-
-    def valid_player?(raw_hash)
-      raw_hash = raw_hash.slice(PLAYER_ALLOWED_KEYS)
-      raw_hash.includes_all?(PLAYER_REQUIRED_KEYS)
-    end
 
     def valid_demo?(raw_hash)
       raw_hash = raw_hash.slice(DEMO_ALLOWED_KEYS)
@@ -66,7 +96,7 @@ module DsdaClient
       true
     end
 
-    def parse(instance, request_hash, model)
+    def parse_instance(instance, model)
       case model
       when :demo
         error = !valid_demo?(instance)
@@ -83,10 +113,18 @@ module DsdaClient
 
       dump_and_exit(instance) if @options.dump_requests?
       uri = URI(@root_uri + "/#{model}s/")
-      RequestService.new(@options).request(uri, request_hash, instance)
+      RequestService.new(@options).request(uri, @request_hash, instance)
     end
 
-    private
+    def make_singular(model)
+      if model.is_a?(String) && model.length > 1 && model[-1] == 's'
+        model = model.slice(0, model.length - 1)
+      end
+    end
+
+    def arrayify(batch)
+      batch.is_a?(Array) ? batch : [batch]
+    end
 
     def dump_input(instance)
       DsdaClient::Terminal.log_error(instance)

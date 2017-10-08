@@ -11,4 +11,4 @@ DsdaClient::Api.setup(options)
 root_uri       = DsdaClient::Api.location
 command_parser = DsdaClient::CommandParser.new(root_uri, options)
 
-DsdaClient::Terminal.run(command_parser, options)
+DsdaClient::Terminal.run(command_parser, ARGF.read)

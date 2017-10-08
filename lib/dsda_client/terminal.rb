@@ -1,26 +1,15 @@
 require 'json'
-require 'dsda_client/api'
 
 module DsdaClient
   class Terminal
-    ALLOWED_MODELS = %w[demo wad player port].freeze
+    SUCCESS_CODE = "\e[32m".freeze
+    ERROR_CODE = "\e[31m".freeze
+    END_CODE = "\e[0m".freeze
 
     class << self
-      def run(command_parser, options)
-        request_hash = {}
-        merge_api_credentials(request_hash) if options.post?
-        entire_hash = JSON.parse(ARGF.read)
-        entire_hash.each do |model, batch|
-          make_singular(model)
-          if !ALLOWED_MODELS.include?(model)
-            error("Unknown model '#{model}'")
-          else
-            batch = arrayify(batch)
-            batch.each do |instance|
-              command_parser.parse(instance, request_hash, model)
-            end
-          end
-        end
+      def run(command_parser, input)
+        data_hash = JSON.parse(input)
+        command_parser.parse(data_hash)
       end
 
       def success(msg)
@@ -61,31 +50,16 @@ module DsdaClient
         end
       end
 
-      def make_singular(model)
-        if model.is_a?(String) && model.length > 1 && model[-1] == 's'
-          model = model.slice(0, model.length - 1)
-        end
-      end
-
-      def arrayify(batch)
-        batch.is_a?(Array) ? batch : [batch]
-      end
-
-      def merge_api_credentials(request_hash)
-        request_hash['API-USERNAME'] = DsdaClient::Api.username
-        request_hash['API-PASSWORD'] = DsdaClient::Api.password
-      end
-
       def colorize(str, color)
-        "#{color}#{str}\e[0m"
+        "#{color}#{str}#{END_CODE}"
       end
 
       def error_colorize(str)
-        colorize(str, "\e[31m")
+        colorize(str, ERROR_CODE)
       end
 
       def success_colorize(str)
-        colorize(str, "\e[32m")
+        colorize(str, SUCCESS_CODE)
       end
     end
   end
