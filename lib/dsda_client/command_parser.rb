@@ -3,6 +3,7 @@ require 'cgi'
 require 'dsda_client/request_service'
 require 'dsda_client/api'
 require 'dsda_client/terminal'
+require 'dsda_client/incident_tracker'
 
 module DsdaClient
   class CommandParser
@@ -16,7 +17,7 @@ module DsdaClient
     def parse(data_hash)
       generate_request_hash
       data_hash.each do |model, batch|
-        make_singular(model)
+        model = make_singular(model)
         if !ALLOWED_MODELS.include?(model)
           DsdaClient::Terminal.error("Unknown model '#{model}'")
         else
@@ -49,7 +50,7 @@ module DsdaClient
     ] + PLAYER_REQUIRED_KEYS).freeze
 
     def valid_player?(raw_hash)
-      raw_hash = raw_hash.slice(PLAYER_ALLOWED_KEYS)
+      raw_hash = raw_hash.slice(*PLAYER_ALLOWED_KEYS)
       raw_hash.includes_all?(PLAYER_REQUIRED_KEYS)
     end
 
@@ -73,66 +74,52 @@ module DsdaClient
     ] + DEMO_REQUIRED_KEYS).freeze
 
     def valid_demo?(raw_hash)
-      raw_hash = raw_hash.slice(DEMO_ALLOWED_KEYS)
+      raw_hash = raw_hash.slice(*DEMO_ALLOWED_KEYS)
       raw_hash.includes_all?(DEMO_REQUIRED_KEYS)
     end
 
     def parse_file_data(instance)
       file_name = instance['file']['name']
-      unless file_name.nil?
-        if File.file?(file_name)
-          instance['file'] = {
-            name: file_name.split('/').last,
-            data: Base64.encode64(File.open(file_name, 'rb').read)
-          }
-        else
-          DsdaClient::Terminal.error("File not found: #{file_name}")
-          return false
-        end
-      else
-        DsdaClient::Terminal.error('File name not given')
-        return false
-      end
+      return false if file_name.nil?
+      return false unless File.file?(file_name)
+      instance['file'] = {
+        name: file_name.split('/').last,
+        data: Base64.encode64(File.open(file_name, 'rb').read)
+      }
       true
     end
 
     def parse_instance(instance, model)
-      case model
-      when :demo
-        error = !valid_demo?(instance)
-      when :player
-        error = !valid_player?(instance)
-      end
-      if error
-        DsdaClient::Terminal.error('Error: invalid model parameters')
-        return dump_input(instance)
-      end
+      error = case model
+              when 'demo'
+                !valid_demo?(instance)
+              when 'player'
+                !valid_player?(instance)
+              end
+      return track(:invalid, model, instance) if error
 
       error = !parse_file_data(instance) unless instance['file'].nil?
-      return dump_input(instance) if error
+      return track(:bad_file, model, instance) if error
 
-      dump_and_exit(instance) if @options.dump_requests?
+      return track(:dump, model, instance) if @options.dump_requests?
+
       uri = URI(@root_uri + "/#{model}s/")
       RequestService.new(@options).request(uri, @request_hash, instance)
     end
 
     def make_singular(model)
       if model.is_a?(String) && model.length > 1 && model[-1] == 's'
-        model = model.slice(0, model.length - 1)
+        return model.slice(0, model.length - 1)
       end
+      model
     end
 
     def arrayify(batch)
       batch.is_a?(Array) ? batch : [batch]
     end
 
-    def dump_input(instance)
-      DsdaClient::Terminal.log_error(instance)
-    end
-
-    def dump_and_exit(instance)
-      dump_input(instance)
-      exit
+    def track(*args)
+      DsdaClient::IncidentTracker.track(*args)
     end
   end
 end
