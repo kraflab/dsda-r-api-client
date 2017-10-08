@@ -6,18 +6,19 @@ RSpec.describe DsdaClient::Api do
 
   before do
     described_class.setup(production_options)
+    ENV["DSDA_API_SOMETHING"]     = 'something'
+    ENV['DSDA_API_DEV_SOMETHING'] = 'dev_something'
   end
 
   describe '.key' do
-    context 'key not found' do
+    context 'key does not exist' do
       it 'raises error' do
         expect { described_class.not_a_key }.to raise_error(StandardError)
       end
     end
 
-    context 'key found' do
+    context 'key exists' do
       it 'returns the environment key' do
-        ENV["DSDA_API_SOMETHING"] = 'something'
         expect(described_class.something).to eq('something')
       end
 
@@ -26,7 +27,6 @@ RSpec.describe DsdaClient::Api do
 
         it 'returns the development environment key' do
           described_class.setup(development_options)
-          ENV['DSDA_API_DEV_SOMETHING'] = 'dev_something'
           expect(described_class.something).to eq('dev_something')
         end
       end
