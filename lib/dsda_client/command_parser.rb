@@ -104,7 +104,7 @@ module DsdaClient
       return track(:dump, model, instance) if @options.dump_requests?
 
       uri = URI(@root_uri + "/#{model}s/")
-      RequestService.new(@options).request(uri, @request_hash, instance)
+      RequestService.new(@options).request(uri, @request_hash, { model => instance})
     end
 
     def make_singular(model)

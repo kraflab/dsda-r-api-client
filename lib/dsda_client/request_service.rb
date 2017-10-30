@@ -14,9 +14,9 @@ module DsdaClient
     def request(uri, query, body)
       response = make_request(uri, query, body)
       if response.is_a? Net::HTTPSuccess
-        request_success(response, original)
+        request_success(response, body)
       else
-        request_failure(original)
+        request_failure(body)
       end
     end
 
@@ -45,7 +45,7 @@ module DsdaClient
     end
 
     def make_request(uri, query, body)
-      print "Issuing #{action.upcase} request... "
+      print "Issuing request... "
       request = request_for_uri(uri)
       merge_into_header(request, query)
       request.body = body.to_json
