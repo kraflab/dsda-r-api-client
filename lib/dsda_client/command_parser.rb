@@ -70,7 +70,9 @@ module DsdaClient
     ].freeze
 
     DEMO_ALLOWED_KEYS = ([
-      'tags'
+      'tags',
+      'compatibility',
+      'video_link'
     ] + DEMO_REQUIRED_KEYS).freeze
 
     def valid_demo?(raw_hash)
