@@ -13,54 +13,53 @@ module DsdaClient
 
     def request(uri, query, body)
       response = make_request(uri, query, body)
-      if response.is_a? Net::HTTPSuccess
-        request_success(response, body)
-      else
-        request_failure(body)
-      end
+      return request_failure(response, body) unless response.is_a? Net::HTTPSuccess
+      request_success(response, body)
     end
 
     private
 
+    def terminal
+      DsdaClient::Terminal
+    end
+
     def response_error(response_hash, original)
-      DsdaClient::Terminal.error("Error: #{response_hash['error_message']}")
-      DsdaClient::Terminal.log_error(original)
+      terminal.error("Error: #{response_hash['error_message']}")
+      terminal.log_error(original)
     end
 
     def request_success(response, original)
       response_hash = JSON.parse(response.body)
-      DsdaClient::Terminal.bracket_success('SUCCESS')
-      DsdaClient::Terminal.pretty_json(response_hash.except('error', 'error_message'))
-      if response_hash['error']
-        response_error(response_hash, original)
-      else
-        DsdaClient::Terminal.success('Success!')
-      end
+      terminal.bracket_success('SUCCESS')
+      terminal.pretty_json(response_hash.except('error', 'error_message'))
+      return response_error(response_hash, original) if response_hash['error']
+      terminal.success('Success!')
     end
 
-    def request_failure(original)
-      DsdaClient::Terminal.bracket_error('FAIL')
-      DsdaClient::Terminal.error("Error: #{response.code}")
-      DsdaClient::Terminal.log_error(original)
+    def request_failure(response, original)
+      terminal.bracket_error('FAIL')
+      terminal.error("Error: #{response.code}")
+      terminal.log_error(original)
     end
 
     def make_request(uri, query, body)
       print "Issuing request... "
-      request = request_for_uri(uri)
-      merge_into_header(request, query)
-      request.body = body.to_json
-      request.content_type = CONTENT_TYPE
+      request = initialize_request(uri, query, body)
       Net::HTTP.start(uri.hostname, uri.port, use_ssl: @options.production?) do |http|
         http.request(request)
       end
     end
 
+    def initialize_request(uri, query, body)
+      request = request_for_uri(uri)
+      merge_into_header(request, query)
+      request.body = body.to_json
+      request.content_type = CONTENT_TYPE
+      request
+    end
+
     def request_for_uri(uri)
-      if @options.post?
-        Net::HTTP::Post.new(uri)
-      else
-        Net::HTTP::Get.new(uri)
-      end
+      @options.post? ? Net::HTTP::Post.new(uri) : Net::HTTP::Get.new(uri)
     end
 
     def merge_into_header(req, query)
