@@ -19,7 +19,7 @@ module DsdaClient
     def parse(data_hash)
       generate_request_hash
       data_hash.each do |model, batch|
-        model = make_singular(model)
+        model = model.singularize
         next if unknown_model?(model, batch)
         parse_batch(model, batch)
       end
@@ -73,13 +73,6 @@ module DsdaClient
 
       uri = URI(@root_uri + "/#{model}s/")
       RequestService.new(@options).request(uri, @request_hash, { model => instance})
-    end
-
-    def make_singular(model)
-      if model.is_a?(String) && model.length > 1 && model[-1] == 's'
-        return model.slice(0, model.length - 1)
-      end
-      model
     end
 
     def arrayify(batch)
