@@ -20,7 +20,7 @@ module DsdaClient
       generate_request_hash
       data_hash.each do |model, batch|
         model = make_singular(model)
-        next if unknown_model?(model)
+        next if unknown_model?(model, batch)
         parse_batch(model, batch)
       end
     end
@@ -32,11 +32,11 @@ module DsdaClient
       merge_api_credentials if @options.post?
     end
 
-    def unknown_model?(model)
-      return true if ALLOWED_MODELS.include?(model)
+    def unknown_model?(model, batch)
+      return false if ALLOWED_MODELS.include?(model)
       DsdaClient::Terminal.error("Unknown model '#{model}'")
       DsdaClient::IncidentTracker.track(:unknown_model, model, batch)
-      false
+      true
     end
 
     def parse_batch(model, batch)
