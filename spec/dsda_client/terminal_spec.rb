@@ -23,28 +23,28 @@ RSpec.describe DsdaClient::Terminal do
 
   describe '.success' do
     it 'prints out coloured text' do
-      expect(STDOUT).to receive(:puts).with(success_text)
+      expect($stdout).to receive(:puts).with(success_text)
       described_class.success(text)
     end
   end
 
   describe '.error' do
     it 'prints out coloured text' do
-      expect(STDOUT).to receive(:puts).with(error_text)
+      expect($stdout).to receive(:puts).with(error_text)
       described_class.error(text)
     end
   end
 
   describe '.bracket_success' do
     it 'prints out success text wrapped in brackets' do
-      expect(STDOUT).to receive(:puts).with('[ ' + success_text + ' ]')
+      expect($stdout).to receive(:puts).with('[ ' + success_text + ' ]')
       described_class.bracket_success(text)
     end
   end
 
   describe '.bracket_error' do
     it 'prints out error text wrapped in brackets' do
-      expect(STDOUT).to receive(:puts).with('[ ' + error_text + ' ]')
+      expect($stdout).to receive(:puts).with('[ ' + error_text + ' ]')
       described_class.bracket_error(text)
     end
   end
@@ -54,14 +54,14 @@ RSpec.describe DsdaClient::Terminal do
 
   describe '.log_error' do
     it 'logs a pruned json to stderr' do
-      expect(STDERR).to receive(:puts).with(JSON.pretty_generate(pruned_data))
+      expect($stderr).to receive(:puts).with(JSON.pretty_generate(pruned_data))
       described_class.log_error(raw_data)
     end
   end
 
   describe '.pretty_json' do
     it 'prints pretty json' do
-      expect(STDOUT).to receive(:puts)
+      expect($stdout).to receive(:puts)
         .with(JSON.pretty_generate(raw_data).gsub(/"/,''))
       described_class.pretty_json(raw_data)
     end

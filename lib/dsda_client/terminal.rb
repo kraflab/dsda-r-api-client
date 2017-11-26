@@ -22,7 +22,7 @@ module DsdaClient
 
       def log_error(obj)
         prune_raw_data!(obj)
-        STDERR.puts JSON.pretty_generate(obj)
+        $stderr.puts JSON.pretty_generate(obj)
       end
 
       def bracket_success(msg)
