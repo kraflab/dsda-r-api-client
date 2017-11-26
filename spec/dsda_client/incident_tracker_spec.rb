@@ -12,6 +12,10 @@ describe DsdaClient::IncidentTracker do
   let(:event_type) { :invalid }
   let(:incidents) { described_class.instance_variable_get(:@incidents) }
 
+  before do
+    described_class.instance_variable_set(:@incidents, nil)
+  end
+
   describe '.track' do
     it 'stores the given content' do
       described_class.track(event_type, model, obj)
