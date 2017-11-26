@@ -15,4 +15,15 @@ RSpec.configure do |config|
   config.shared_context_metadata_behavior = :apply_to_host_groups
   config.order = :random
   Kernel.srand config.seed
+
+  original_stderr = $stderr
+  original_stdout = $stdout
+  config.before(:all) do
+    $stderr = File.open(File::NULL, "w")
+    $stdout = File.open(File::NULL, "w")
+  end
+  config.after(:all) do
+    $stderr = original_stderr
+    $stdout = original_stdout
+  end
 end
