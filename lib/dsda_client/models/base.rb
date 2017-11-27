@@ -9,7 +9,7 @@ module DsdaClient
         end
 
         def allow_keys(*args)
-          @allowed_keys = args
+          @allowed_keys = args + @required_keys
         end
 
         def invalid?(raw_hash)
