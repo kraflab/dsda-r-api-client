@@ -1,4 +1,5 @@
 require 'pry'
+require 'extensions'
 
 ENV['DSDA_API_USERNAME'] = 'test_user'
 ENV['DSDA_API_PASSWORD'] = 'password'
