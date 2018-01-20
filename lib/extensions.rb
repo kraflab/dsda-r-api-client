@@ -18,4 +18,11 @@ class Hash
     end
     true
   end
+
+  def includes_only?(allowed_keys)
+    keys.each do |key|
+      return false unless allowed_keys.include?(key)
+    end
+    true
+  end
 end

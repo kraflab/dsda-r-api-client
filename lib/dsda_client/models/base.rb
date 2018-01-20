@@ -17,7 +17,7 @@ module DsdaClient
         end
 
         def valid?(raw_hash)
-          raw_hash = raw_hash.slice(*allowed_keys)
+          raw_hash.includes_only?(allowed_keys) &&
           raw_hash.includes_all?(required_keys)
         end
       end
