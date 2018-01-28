@@ -20,31 +20,38 @@ RSpec.describe DsdaClient::Terminal do
   let(:error_text) {
     described_class::ERROR_CODE + text + described_class::END_CODE
   }
+  let(:stdout) { instance_double(IO) }
+  let(:stderr) { instance_double(IO) }
+
+  before do
+    allow(described_class).to receive(:stdout).and_return(stdout)
+    allow(described_class).to receive(:stderr).and_return(stderr)
+  end
 
   describe '.success' do
     it 'prints out coloured text' do
-      expect($stdout).to receive(:puts).with(success_text)
+      expect(stdout).to receive(:puts).with(success_text)
       described_class.success(text)
     end
   end
 
   describe '.error' do
     it 'prints out coloured text' do
-      expect($stdout).to receive(:puts).with(error_text)
+      expect(stdout).to receive(:puts).with(error_text)
       described_class.error(text)
     end
   end
 
   describe '.bracket_success' do
     it 'prints out success text wrapped in brackets' do
-      expect($stdout).to receive(:puts).with('[ ' + success_text + ' ]')
+      expect(stdout).to receive(:puts).with('[ ' + success_text + ' ]')
       described_class.bracket_success(text)
     end
   end
 
   describe '.bracket_error' do
     it 'prints out error text wrapped in brackets' do
-      expect($stdout).to receive(:puts).with('[ ' + error_text + ' ]')
+      expect(stdout).to receive(:puts).with('[ ' + error_text + ' ]')
       described_class.bracket_error(text)
     end
   end
@@ -54,14 +61,14 @@ RSpec.describe DsdaClient::Terminal do
 
   describe '.log_error' do
     it 'logs a pruned json to stderr' do
-      expect($stderr).to receive(:puts).with(JSON.pretty_generate(pruned_data))
+      expect(stderr).to receive(:puts).with(JSON.pretty_generate(pruned_data))
       described_class.log_error(raw_data)
     end
   end
 
   describe '.pretty_json' do
     it 'prints pretty json' do
-      expect($stdout).to receive(:puts)
+      expect(stdout).to receive(:puts)
         .with(JSON.pretty_generate(raw_data).gsub(/"/,''))
       described_class.pretty_json(raw_data)
     end

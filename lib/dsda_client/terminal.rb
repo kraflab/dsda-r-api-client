@@ -13,31 +13,44 @@ module DsdaClient
       end
 
       def success(msg)
-        puts success_colorize(msg)
+        stdout.puts success_colorize(msg)
       end
 
       def error(msg)
-        puts error_colorize(msg)
+        stdout.puts error_colorize(msg)
       end
 
       def log_error(obj)
         prune_raw_data!(obj)
-        $stderr.puts JSON.pretty_generate(obj)
+        stderr.puts JSON.pretty_generate(obj)
       end
 
       def bracket_success(msg)
-        puts "[ #{success_colorize(msg)} ]"
+        stdout.puts "[ #{success_colorize(msg)} ]"
       end
 
       def bracket_error(msg)
-        puts "[ #{error_colorize(msg)} ]"
+        stdout.puts "[ #{error_colorize(msg)} ]"
       end
 
       def pretty_json(hash)
-        puts JSON.pretty_generate(hash).gsub(/"/,'')
+        stdout.puts JSON.pretty_generate(hash).gsub(/"/,'')
+      end
+
+      def send_output_to_null
+        @stdout = File.open(File::NULL, "w")
+        @stderr = File.open(File::NULL, "w")
       end
 
       private
+
+      def stdout
+        @stdout ||= $stdout
+      end
+
+      def stderr
+        @stderr ||= $stderr
+      end
 
       def prune_raw_data!(obj)
         if obj.is_a?(Hash)

@@ -1,5 +1,6 @@
 require 'pry'
 require 'extensions'
+require 'dsda_client/terminal'
 
 ENV['DSDA_API_USERNAME'] = 'test_user'
 ENV['DSDA_API_PASSWORD'] = 'password'
@@ -17,14 +18,5 @@ RSpec.configure do |config|
   config.order = :random
   Kernel.srand config.seed
 
-  original_stderr = $stderr
-  original_stdout = $stdout
-  config.before(:all) do
-    $stderr = File.open(File::NULL, "w")
-    $stdout = File.open(File::NULL, "w")
-  end
-  config.after(:all) do
-    $stderr = original_stderr
-    $stdout = original_stdout
-  end
+  DsdaClient::Terminal.send_output_to_null
 end
