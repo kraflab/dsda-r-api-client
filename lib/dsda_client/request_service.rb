@@ -11,8 +11,8 @@ module DsdaClient
       @options = options
     end
 
-    def request(uri, query, body)
-      response = make_request(uri, query, body)
+    def request(uri, headers, body)
+      response = make_request(uri, headers, body)
       return request_failure(response, body) unless response.is_a? Net::HTTPSuccess
       request_success(response, body)
     end
@@ -42,17 +42,17 @@ module DsdaClient
       terminal.log_error(original)
     end
 
-    def make_request(uri, query, body)
-      print "Issuing request... "
-      request = initialize_request(uri, query, body)
+    def make_request(uri, headers, body)
+      terminal.print("Issuing request... ")
+      request = initialize_request(uri, headers, body)
       Net::HTTP.start(uri.hostname, uri.port, use_ssl: @options.production?) do |http|
         http.request(request)
       end
     end
 
-    def initialize_request(uri, query, body)
+    def initialize_request(uri, headers, body)
       request = request_for_uri(uri)
-      merge_into_header(request, query)
+      merge_into_header(request, headers)
       request.body = body.to_json
       request.content_type = CONTENT_TYPE
       request
@@ -62,8 +62,8 @@ module DsdaClient
       @options.post? ? Net::HTTP::Post.new(uri) : Net::HTTP::Get.new(uri)
     end
 
-    def merge_into_header(req, query)
-      query.each do |k, v|
+    def merge_into_header(req, headers)
+      headers.each do |k, v|
         req[k] = v
       end
     end

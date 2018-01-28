@@ -37,6 +37,10 @@ module DsdaClient
         stdout.puts JSON.pretty_generate(hash).gsub(/"/,'')
       end
 
+      def print(msg)
+        stdout.print(msg)
+      end
+
       def send_output_to_null
         @stdout = File.open(File::NULL, "w")
         @stderr = File.open(File::NULL, "w")
