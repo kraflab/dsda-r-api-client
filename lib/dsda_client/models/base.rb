@@ -2,14 +2,20 @@ module DsdaClient
   module Models
     class Base
       class << self
-        attr_reader :required_keys, :allowed_keys
-
         def require_keys(*args)
           @required_keys = args
         end
 
+        def required_keys
+          @required_keys ||= {}
+        end
+
         def allow_keys(*args)
           @allowed_keys = args + @required_keys
+        end
+
+        def allowed_keys
+          @allowed_keys ||= required_keys
         end
 
         def invalid?(raw_hash)
