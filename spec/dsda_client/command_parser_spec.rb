@@ -87,7 +87,7 @@ RSpec.describe DsdaClient::CommandParser do
               'author' => 'jeff',
               'iwad' => 'doom',
               'name' => 'jeffwad',
-              'username' => 'jeffwad',
+              'short_name' => 'jeffwad',
               'file' => {
                 'name' => 'jeffwad.wad',
                 'data' => '[encode]'
