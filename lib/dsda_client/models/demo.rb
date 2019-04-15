@@ -6,7 +6,8 @@ module DsdaClient
       require_keys 'tas', 'guys', 'version', 'wad', 'file', 'engine',
                    'time', 'level', 'levelstat', 'category', 'recorded_at',
                    'players'
-      allow_keys   'tags', 'compatibility', 'video_link'
+      allow_keys   'tags', 'compatibility', 'video_link', 'kills', 'items',
+                   'secrets'
     end
   end
 end
