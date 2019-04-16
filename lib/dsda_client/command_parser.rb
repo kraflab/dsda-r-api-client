@@ -1,11 +1,9 @@
-require 'base64'
-require 'cgi'
 require 'active_support/inflector'
-require 'dsda_client/request_service'
 require 'dsda_client/api'
 require 'dsda_client/terminal'
 require 'dsda_client/incident_tracker'
 require 'dsda_client/models'
+require 'dsda_client/parsers'
 
 module DsdaClient
   class CommandParser
@@ -17,7 +15,7 @@ module DsdaClient
     end
 
     def parse(data_hash)
-      generate_request_hash
+      fill_headers
       data_hash.each do |model, batch|
         model = model.singularize
         next if unknown_model?(model, batch)
@@ -27,9 +25,18 @@ module DsdaClient
 
     private
 
-    def generate_request_hash
-      @request_hash = {}
-      merge_api_credentials if @options.post?
+    def parse_batch(model, batch)
+      arrayify(batch).each do |instance|
+        parse_instance(instance, model)
+      end
+    end
+
+    def parser(model)
+      "DsdaClient::Parsers::#{model.camelize}".constantize
+    end
+
+    def parse_instance(instance, model)
+      parser(model).call(instance, @root_uri, @headers, @options)
     end
 
     def unknown_model?(model, batch)
@@ -39,48 +46,18 @@ module DsdaClient
       true
     end
 
-    def parse_batch(model, batch)
-      batch = arrayify(batch)
-      batch.each do |instance|
-        parse_instance(instance, model)
-      end
+    def fill_headers
+      @headers = {}
+      merge_api_credentials if @options.post?
     end
 
     def merge_api_credentials
-      @request_hash['API-USERNAME'] = DsdaClient::Api.username
-      @request_hash['API-PASSWORD'] = DsdaClient::Api.password
+      @headers['API-USERNAME'] = DsdaClient::Api.username
+      @headers['API-PASSWORD'] = DsdaClient::Api.password
     end
 
-    def parse_file_data(instance)
-      return true if instance['file'].nil?
-      file_name = instance['file']['name']
-      return false if file_name.nil? || !File.file?(file_name)
-      instance['file'] = {
-        name: file_name.split('/').last,
-        data: Base64.encode64(File.open(file_name, 'rb').read)
-      }
-      true
-    end
-
-    def instance_invalid?(instance, model)
-      "DsdaClient::Models::#{model.capitalize}".constantize.invalid?(instance)
-    end
-
-    def parse_instance(instance, model)
-      return track(:invalid,  model, instance) if instance_invalid?(instance, model)
-      return track(:bad_file, model, instance) unless parse_file_data(instance)
-      return track(:dump,     model, instance) if @options.dump_requests?
-
-      uri = URI(@root_uri + "/#{model}s/")
-      RequestService.new(@options).request(uri, @request_hash, { model => instance})
-    end
-
-    def arrayify(batch)
-      batch.is_a?(Array) ? batch : [batch]
-    end
-
-    def track(*args)
-      DsdaClient::IncidentTracker.track(*args)
+    def arrayify(object)
+      object.is_a?(Array) ? object : [object]
     end
   end
 end

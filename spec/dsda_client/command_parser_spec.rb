@@ -9,7 +9,7 @@ RSpec.describe DsdaClient::CommandParser do
   let(:root_uri) { 'https://test' }
   let(:command_parser) { described_class.new(root_uri, options) }
   let(:data_hash) { { 'player' => { 'name' => 'jeff' } } }
-  let(:request_hash) { command_parser.instance_variable_get(:@request_hash) }
+  let(:request_hash) { command_parser.instance_variable_get(:@headers) }
 
   describe '#parse' do
     subject { command_parser.parse(data_hash) }
@@ -46,8 +46,9 @@ RSpec.describe DsdaClient::CommandParser do
       end
 
       context 'invalid instance' do
+        let(:data_hash) { { 'player' => { 'foo' => 'jeff' } } }
+
         it 'tracks an error' do
-          allow(command_parser).to receive(:instance_invalid?).and_return(true)
           expect(DsdaClient::IncidentTracker).to receive(:track)
             .with(:invalid, anything, anything)
           subject
@@ -55,8 +56,22 @@ RSpec.describe DsdaClient::CommandParser do
       end
 
       context 'bad file data' do
+        let(:data_hash) do
+          {
+            'wad' => {
+              'author' => 'jeff',
+              'iwad' => 'doom',
+              'name' => 'jeffwad',
+              'short_name' => 'jeffwad',
+              'file' => {
+                'foo' => 'jeffwad.wad',
+                'data' => '[encode]'
+              }
+            }
+          }
+        end
+
         it 'tracks an error' do
-          allow(command_parser).to receive(:parse_file_data).and_return(false)
           expect(DsdaClient::IncidentTracker).to receive(:track)
             .with(:bad_file, anything, anything)
           subject
