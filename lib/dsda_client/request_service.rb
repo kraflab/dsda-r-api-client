@@ -11,41 +11,52 @@ module DsdaClient
       @options = options
     end
 
-    def request(uri, headers, body)
-      response = make_request(uri, headers, body)
-      return request_failure(response, body) unless response.is_a? Net::HTTPSuccess
-      request_success(response, body)
+    def request(uri, headers, request_body)
+      make_request(uri, headers, request_body)
+      handle_response(request_body)
+      response_hash
     end
 
     private
+
+    def handle_response(request_body)
+      if @response.code == '201'
+        request_success(request_body)
+      else
+        request_failure(request_body)
+      end
+    end
+
+    def response_hash
+      @response_hash ||= JSON.parse(@response.body)
+    end
 
     def terminal
       DsdaClient::Terminal
     end
 
-    def response_error(response_hash, original)
+    def response_error(request_body)
       terminal.error("Error: #{response_hash['error_message']}")
-      terminal.log_error(original)
+      terminal.log_error(request_body)
     end
 
-    def request_success(response, original)
-      response_hash = JSON.parse(response.body)
+    def request_success(request_body)
       terminal.bracket_success('SUCCESS')
       terminal.pretty_json(response_hash.except('error', 'error_message'))
-      return response_error(response_hash, original) if response_hash['error']
+      return response_error(request_body) if response_hash['error']
       terminal.success('Success!')
     end
 
-    def request_failure(response, original)
+    def request_failure(request_body)
       terminal.bracket_error('FAIL')
-      terminal.error("Error: #{response.code}")
-      terminal.log_error(original)
+      terminal.error("Error: #{@response.code}")
+      terminal.log_error(request_body)
     end
 
     def make_request(uri, headers, body)
       terminal.print("Issuing request... ")
       request = initialize_request(uri, headers, body)
-      Net::HTTP.start(uri.hostname, uri.port, use_ssl: @options.production?) do |http|
+      @response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: @options.production?) do |http|
         http.request(request)
       end
     end
