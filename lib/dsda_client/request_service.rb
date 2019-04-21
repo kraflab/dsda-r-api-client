@@ -20,7 +20,7 @@ module DsdaClient
     private
 
     def handle_response(request_body)
-      if @response.code == '201'
+      if @response.code =~ /^2/
         request_success(request_body)
       else
         request_failure(request_body)
