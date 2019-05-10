@@ -3,7 +3,7 @@ Request:
 ```json
 {
   "demo": {
-    "tas": "0",
+    "tas": false,
     "guys": "1",
     "version": "0",
     "wad": "heretic",
@@ -49,10 +49,7 @@ Response:
 ```
 
 ### Field Details
-`tas`: *required*, specifies the tas level of a demo.
-```ruby
-0: Not Tas, 1: Segmented, 2: Slowdown, 3: Partial Building, 4: Built
-```
+`tas`: *required*, specifies whether or not the demo is a tas.
 
 `guys`: *required*, specifies the number of players **in the game** (i.e., "doomguys").  Two players could work cooperatively on a tas: then you would have two names in the players field, but only one guy in the game.
 

@@ -9,7 +9,7 @@ This format is specifically for this api client. The demo entries have the same 
     },
     "demos": [
       {
-        "tas": "0",
+        "tas": false,
         "guys": "1",
         "version": "0",
         "wad": "heretic",
@@ -24,7 +24,7 @@ This format is specifically for this api client. The demo entries have the same 
         ]
       },
       {
-        "tas": "0",
+        "tas": false,
         "guys": "1",
         "version": "0",
         "wad": "heretic",
