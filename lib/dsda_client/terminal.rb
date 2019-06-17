@@ -21,6 +21,7 @@ module DsdaClient
       end
 
       def log_error(obj)
+        stdout.puts 'Error logged to failed_uploads.json!'
         prune_raw_data!(obj)
         stderr.puts JSON.pretty_generate(obj)
       end
@@ -53,7 +54,7 @@ module DsdaClient
       end
 
       def stderr
-        @stderr ||= $stderr
+        @stderr ||= File.open('failed_uploads.json', 'w')
       end
 
       def prune_raw_data!(obj)
