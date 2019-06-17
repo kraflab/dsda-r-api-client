@@ -18,7 +18,7 @@ module DsdaClient
     end
 
     def post?
-      @request == :post
+      true
     end
 
     private
@@ -35,12 +35,6 @@ module DsdaClient
       end
     end
 
-    def post_option(parser)
-      parser.on('--post', 'Supplied data will be posted') do
-        @request = :post
-      end
-    end
-
     def help_option(parser)
       parser.on('-h', '--help', 'Print this help') do
         puts parser
@@ -53,7 +47,6 @@ module DsdaClient
         parser.banner = "Usage: dsda-client.rb [options]"
         dump_requests_option(parser)
         development_option(parser)
-        post_option(parser)
         help_option(parser)
       end.parse!(args)
     end
