@@ -11,6 +11,8 @@ module DsdaClient
       end
 
       def dump
+        return unless @incidents
+
         DsdaClient::Terminal.log_error(@incidents)
       end
     end
