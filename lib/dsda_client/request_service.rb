@@ -37,7 +37,7 @@ module DsdaClient
 
     def response_error(request_body)
       terminal.error("Error: #{response_hash['error_message']}")
-      terminal.log_error(request_body)
+      report_error(request_body)
     end
 
     def request_success(request_body)
@@ -50,7 +50,7 @@ module DsdaClient
     def request_failure(request_body)
       terminal.bracket_error('FAIL')
       terminal.error("Error: #{@response.code}")
-      terminal.log_error(request_body)
+      report_error(request_body)
     end
 
     def make_request(uri, headers, body)
@@ -77,6 +77,12 @@ module DsdaClient
       headers.each do |k, v|
         req[k] = v
       end
+    end
+
+    def report_error(request_body)
+      terminal.report_failure
+      terminal.log_error(request_body)
+      terminal.log_error(response_hash)
     end
   end
 end

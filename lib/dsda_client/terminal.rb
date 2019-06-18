@@ -20,8 +20,11 @@ module DsdaClient
         stdout.puts error_colorize(msg)
       end
 
-      def log_error(obj)
+      def report_failure
         stdout.puts 'Failure logged to failed_uploads.json!'
+      end
+
+      def log_error(obj)
         prune_raw_data!(obj)
         stderr.puts JSON.pretty_generate(obj)
       end
