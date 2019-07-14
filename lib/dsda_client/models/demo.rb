@@ -5,7 +5,7 @@ module DsdaClient
     class Demo < DsdaClient::Models::Base
       require_keys 'tas', 'guys', 'version', 'wad', 'file', 'engine',
                    'time', 'level', 'levelstat', 'category', 'recorded_at',
-                   'players'
+                   'players', 'solo_net'
       allow_keys   'tags', 'compatibility', 'video_link', 'kills', 'items',
                    'secrets'
     end

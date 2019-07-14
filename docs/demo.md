@@ -4,6 +4,7 @@ Request:
 {
   "demo": {
     "tas": false,
+    "solo_net": false,
     "guys": "1",
     "version": "0",
     "wad": "heretic",
@@ -50,6 +51,8 @@ Response:
 
 ### Field Details
 `tas`: *required*, specifies whether or not the demo is a tas.
+
+`solo_net`: *required*, specifies whether or not the demo uses solo-net.
 
 `guys`: *required*, specifies the number of players **in the game** (i.e., "doomguys").  Two players could work cooperatively on a tas: then you would have two names in the players field, but only one guy in the game.
 

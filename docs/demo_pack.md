@@ -10,6 +10,7 @@ This format is specifically for this api client. The demo entries have the same 
     "demos": [
       {
         "tas": false,
+        "solo_net": false,
         "guys": "1",
         "version": "0",
         "wad": "heretic",
@@ -25,6 +26,7 @@ This format is specifically for this api client. The demo entries have the same 
       },
       {
         "tas": false,
+        "solo_net": false,
         "guys": "1",
         "version": "0",
         "wad": "heretic",
