@@ -6,7 +6,6 @@ RSpec.describe DsdaClient::RequestService do
   let(:options) do
     instance_double(
       DsdaClient::Options,
-      post?: true,
       production?: false,
       dump_requests?: false
     )

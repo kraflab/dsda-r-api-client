@@ -48,7 +48,7 @@ module DsdaClient
 
     def fill_headers
       @headers = {}
-      merge_api_credentials if @options.post?
+      merge_api_credentials
     end
 
     def merge_api_credentials

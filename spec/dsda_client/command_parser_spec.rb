@@ -4,7 +4,7 @@ require 'dsda_client/command_parser'
 
 RSpec.describe DsdaClient::CommandParser do
   let(:options) { instance_double(DsdaClient::Options,
-    post?: true, production?: false, dump_requests?: false) }
+    production?: false, dump_requests?: false) }
   let!(:api) { DsdaClient::Api.setup(options) }
   let(:root_uri) { 'https://test' }
   let(:command_parser) { described_class.new(root_uri, options) }

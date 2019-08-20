@@ -17,10 +17,6 @@ module DsdaClient
       @production
     end
 
-    def post?
-      true
-    end
-
     private
 
     def dump_requests_option(parser)

@@ -7,7 +7,6 @@ RSpec.describe DsdaClient::Options do
 
     it { expect(options.dump_requests?).to be false }
     it { expect(options.production?).to be true }
-    it { expect(options.post?).to be false }
   end
 
   describe '#dump_requests?' do
@@ -22,14 +21,6 @@ RSpec.describe DsdaClient::Options do
     context '--local option used' do
       it 'returns false' do
         expect(described_class.new(['--local']).production?).to be false
-      end
-    end
-  end
-
-  describe '#post?' do
-    context '--post options used' do
-      it 'returns true' do
-        expect(described_class.new(['--post']).post?).to be true
       end
     end
   end
