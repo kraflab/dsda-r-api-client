@@ -7,8 +7,9 @@ module DsdaClient
   class RequestService
     CONTENT_TYPE = 'application/json'.freeze
 
-    def initialize(options)
+    def initialize(options, method: :post)
       @options = options
+      @method = method
     end
 
     def request(uri, headers, request_body)
@@ -70,7 +71,7 @@ module DsdaClient
     end
 
     def request_for_uri(uri)
-      @options.post? ? Net::HTTP::Post.new(uri) : Net::HTTP::Get.new(uri)
+      @method == :post ? Net::HTTP::Post.new(uri) : Net::HTTP::Patch.new(uri)
     end
 
     def merge_into_header(req, headers)
