@@ -30,6 +30,12 @@ Request:
     "recorded_at": "2002-07-15 20:03:22 -0400",
     "players": [
       "Vincent Catalaa"
+    ],
+    "tags": [
+      {
+        "text": "Also reality",
+        "show": true
+      }
     ]
   }
 }
@@ -51,4 +57,4 @@ Response:
 ### Field Details
 `match_details`: *required*, details used to find the demo to update. The _wad_, _category_, and _level_ subfields are required. The others are optional and must be used when needed to narrow down the results. The player subfield just takes one player (pick anyone for a coop run).
 
-The other fields will update the existing ones. You can leave out all fields except the one(s) you want to update. Currently the same fields are supported as in demo creation, except for `file`, `file_id`, and `tags`. The data replaces the current value, so if you want to add a player, make sure to include all players in your request.
+The other fields will update the existing ones. You can leave out all fields except the one(s) you want to update. Currently the same fields are supported as in demo creation, except for `file`, `file_id`. The data replaces the current value, so if you want to add a player, make sure to include all players in your request.
