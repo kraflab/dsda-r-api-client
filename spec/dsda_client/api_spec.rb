@@ -2,33 +2,37 @@ require 'spec_helper'
 require 'dsda_client/api'
 
 RSpec.describe DsdaClient::Api do
-  let(:production_options) { double(production?: true) }
+  let(:options) { double(production?: true) }
 
   before do
-    described_class.setup(production_options)
-    ENV["DSDA_API_SOMETHING"]     = 'something'
-    ENV['DSDA_API_DEV_SOMETHING'] = 'dev_something'
+    described_class.setup(options)
   end
 
-  describe '.key' do
-    context 'key does not exist' do
+  describe '.username' do
+    subject { described_class.username }
+
+    context 'when the environment key does not exist' do
+      before do
+        ENV["DSDA_API_USERNAME"] = nil
+      end
+
       it 'raises error' do
-        expect { described_class.not_a_key }.to raise_error(StandardError)
+        expect { subject }.to raise_error(StandardError)
       end
     end
 
-    context 'key exists' do
-      it 'returns the environment key' do
-        expect(described_class.something).to eq('something')
+    context 'when the environment key exists' do
+      before do
+        ENV["DSDA_API_USERNAME"]     = 'username'
+        ENV['DSDA_API_DEV_USERNAME'] = 'dev_username'
       end
 
-      context 'development environment' do
-        let(:development_options) { double(production?: false) }
+      it { is_expected.to eq('username') }
 
-        it 'returns the development environment key' do
-          described_class.setup(development_options)
-          expect(described_class.something).to eq('dev_something')
-        end
+      context 'development environment' do
+        let(:options) { double(production?: false) }
+
+        it { is_expected.to eq('dev_username') }
       end
     end
   end

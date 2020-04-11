@@ -2,18 +2,34 @@ require 'dsda_client/terminal'
 require 'dsda_client/token_manager'
 
 module DsdaClient
-  class Api
-    def self.setup(options)
-      @variable_prefix = "DSDA_API_#{options.production? ? '' : 'DEV_'}"
+  module Api
+    extend self
+
+    def setup(options)
+      @key_prefix = "DSDA_API_#{options.production? ? '' : 'DEV_'}"
     end
 
-    def self.method_missing(m, *args, &block)
-      name = @variable_prefix + m.to_s.upcase
+    def username
+      retrieve(:username)
+    end
+
+    def password
+      retrieve(:password)
+    end
+
+    def location
+      retrieve(:location)
+    end
+
+    def token
+      @token ||= TokenManager.get_token
+    end
+
+    private
+
+    def retrieve(key)
+      name = @key_prefix + key.to_s.upcase
       ENV[name] || fail("Environment variable #{name} not found")
-    end
-
-    def self.token
-      TokenManager.get_token
     end
   end
 end
