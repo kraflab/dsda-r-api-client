@@ -9,9 +9,8 @@ module DsdaClient
   class CommandParser
     ALLOWED_MODELS = %w[demo wad player port demo_pack demo_update].freeze
 
-    def initialize(root_uri, options)
+    def initialize(root_uri)
       @root_uri = root_uri
-      @options = options
     end
 
     def parse(data_hash)
@@ -36,7 +35,7 @@ module DsdaClient
     end
 
     def parse_instance(instance, model)
-      parser(model).call(instance, @root_uri, @headers, @options)
+      parser(model).call(instance, @root_uri, @headers)
     end
 
     def unknown_model?(model, batch)

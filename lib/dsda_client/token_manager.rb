@@ -43,7 +43,7 @@ module DsdaClient
         username: Api.username,
         password: Api.password
       }
-      RequestService.new(Options.options).request(uri, {}, payload)
+      RequestService.new.request(uri, {}, payload)
     end
   end
 end

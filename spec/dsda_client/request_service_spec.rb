@@ -1,18 +1,10 @@
 require 'spec_helper'
-require 'dsda_client/options'
 require 'dsda_client/request_service'
 
 RSpec.describe DsdaClient::RequestService do
-  let(:options) do
-    instance_double(
-      DsdaClient::Options,
-      production?: false,
-      dump_requests?: false
-    )
-  end
   let(:uri) { URI('http://0.0.0.0:3000') }
   let(:headers) { { 'username': 'gandalf' } }
-  let(:service) { described_class.new(options) }
+  let(:service) { described_class.new }
   let(:response) do
     instance_double(
       Net::HTTPSuccess,

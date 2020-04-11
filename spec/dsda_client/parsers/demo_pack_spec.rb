@@ -1,15 +1,8 @@
 require 'spec_helper'
-require 'dsda_client/options'
 require 'dsda_client/command_parser'
 require 'dsda_client/parsers/demo_pack'
 
 describe DsdaClient::Parsers::DemoPack do
-  let(:options) do
-    instance_double(
-      DsdaClient::Options,
-      dump_requests?: false
-    )
-  end
   let(:headers) { {} }
   let(:root_uri) { 'foo' }
   let(:instance) do
@@ -25,7 +18,7 @@ describe DsdaClient::Parsers::DemoPack do
     }
   end
   let(:parser) do
-    described_class.new(instance, root_uri, headers, options)
+    described_class.new(instance, root_uri, headers)
   end
   let(:response) do
     {
@@ -37,7 +30,7 @@ describe DsdaClient::Parsers::DemoPack do
   end
   let(:requester) { instance_double(DsdaClient::RequestService) }
 
-  subject { described_class.call(instance, root_uri, headers, options) }
+  subject { described_class.call(instance, root_uri, headers) }
 
   before do
     allow(described_class).to receive(:new).and_return(parser)

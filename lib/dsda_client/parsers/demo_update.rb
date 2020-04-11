@@ -14,7 +14,7 @@ module DsdaClient
       end
 
       def make_request
-        RequestService.new(options, method: :patch).request(uri, headers, payload)
+        RequestService.new(method: :patch).request(uri, headers, payload)
       end
     end
   end

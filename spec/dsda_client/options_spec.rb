@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'dsda_client/options'
 
 RSpec.describe DsdaClient::Options do
   describe 'defaults' do

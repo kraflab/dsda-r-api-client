@@ -7,8 +7,7 @@ module DsdaClient
   class RequestService
     CONTENT_TYPE = 'application/json'.freeze
 
-    def initialize(options, method: :post)
-      @options = options
+    def initialize(method: :post)
       @method = method
     end
 
@@ -57,7 +56,7 @@ module DsdaClient
     def make_request(uri, headers, body)
       terminal.print("Issuing request... ")
       request = initialize_request(uri, headers, body)
-      @response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: @options.production?) do |http|
+      @response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: Options.production?) do |http|
         http.request(request)
       end
     end

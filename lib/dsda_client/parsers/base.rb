@@ -5,28 +5,27 @@ require 'dsda_client/request_service'
 module DsdaClient
   module Parsers
     class Base
-      def self.call(instance, root_uri, headers, options)
-        new(instance, root_uri, headers, options).call
+      def self.call(instance, root_uri, headers)
+        new(instance, root_uri, headers).call
       end
 
-      def initialize(instance, root_uri, headers, options)
+      def initialize(instance, root_uri, headers)
         @instance = instance
         @root_uri = root_uri
         @headers = headers
-        @options = options
       end
 
       def call
         return track(:invalid,  model, instance) if instance_invalid?
         return track(:bad_file, model, instance) unless parse_file_data
-        return track(:dump,     model, instance) if options.dump_requests?
+        return track(:dump,     model, instance) if Options.dump_requests?
 
         make_request
       end
 
       private
 
-      attr_reader :instance, :headers, :root_uri, :options
+      attr_reader :instance, :headers, :root_uri
 
       def model
         'base'
@@ -41,7 +40,7 @@ module DsdaClient
       end
 
       def make_request
-        RequestService.new(options).request(uri, headers, payload)
+        RequestService.new.request(uri, headers, payload)
       end
 
       def parse_file_data

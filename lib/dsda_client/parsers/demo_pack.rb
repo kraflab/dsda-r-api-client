@@ -28,7 +28,7 @@ module DsdaClient
       end
 
       def make_individual_request(demo)
-        RequestService.new(options).request(uri, headers, 'demo' => demo)
+        RequestService.new.request(uri, headers, 'demo' => demo)
       end
 
       def merge_file_data(demo)
