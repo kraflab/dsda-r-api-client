@@ -1,3 +1,5 @@
+require 'active_support'
+require 'active_support/core_ext'
 require 'pry'
 require 'extensions'
 require 'dsda_client/terminal'
