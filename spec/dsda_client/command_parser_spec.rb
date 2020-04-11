@@ -5,11 +5,14 @@ require 'dsda_client/command_parser'
 RSpec.describe DsdaClient::CommandParser do
   let(:options) { instance_double(DsdaClient::Options,
     production?: false, dump_requests?: false) }
-  let!(:api) { DsdaClient::Api.setup(options) }
   let(:root_uri) { 'https://test' }
   let(:command_parser) { described_class.new(root_uri, options) }
   let(:data_hash) { { 'player' => { 'name' => 'jeff' } } }
   let(:request_hash) { command_parser.instance_variable_get(:@headers) }
+
+  before do
+    allow(DsdaClient::Options).to receive(:production?).and_return(false)
+  end
 
   describe '#parse' do
     subject { command_parser.parse(data_hash) }

@@ -3,6 +3,7 @@ require 'active_support/core_ext'
 require 'pry'
 require 'extensions'
 require 'dsda_client/terminal'
+require 'dsda_client/options'
 
 ENV['DSDA_API_USERNAME'] = 'test_user'
 ENV['DSDA_API_PASSWORD'] = 'password'
@@ -21,4 +22,8 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 
   DsdaClient::Terminal.send_output_to_null
+
+  config.before do
+    DsdaClient::Options.setup([])
+  end
 end

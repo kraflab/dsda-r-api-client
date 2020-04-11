@@ -5,10 +5,6 @@ module DsdaClient
   module Api
     extend self
 
-    def setup(options)
-      @key_prefix = "DSDA_API_#{options.production? ? '' : 'DEV_'}"
-    end
-
     def username
       retrieve(:username)
     end
@@ -28,8 +24,12 @@ module DsdaClient
     private
 
     def retrieve(key)
-      name = @key_prefix + key.to_s.upcase
+      name = key_prefix + key.to_s.upcase
       ENV[name] || fail("Environment variable #{name} not found")
+    end
+
+    def key_prefix
+      "DSDA_API_#{Options.production? ? '' : 'DEV_'}"
     end
   end
 end

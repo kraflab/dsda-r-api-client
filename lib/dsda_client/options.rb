@@ -3,12 +3,18 @@ require 'optparse'
 module DsdaClient
   class Options
     class << self
+      attr_reader :options
+
       def setup(args)
         @options = new(args)
       end
 
-      def options
-        @options
+      def production?
+        options.production?
+      end
+
+      def dump_requests?
+        options.dump_requests?
       end
     end
 

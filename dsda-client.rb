@@ -8,7 +8,6 @@ require 'dsda_client/terminal'
 require 'dsda_client/incident_tracker'
 
 options        = DsdaClient::Options.setup(ARGV)
-DsdaClient::Api.setup(options)
 root_uri       = DsdaClient::Api.location
 command_parser = DsdaClient::CommandParser.new(root_uri, options)
 

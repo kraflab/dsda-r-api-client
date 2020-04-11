@@ -2,10 +2,10 @@ require 'spec_helper'
 require 'dsda_client/api'
 
 RSpec.describe DsdaClient::Api do
-  let(:options) { double(production?: true) }
+  let(:production?) { true }
 
   before do
-    described_class.setup(options)
+    allow(DsdaClient::Options).to receive(:production?).and_return(production?)
   end
 
   describe '.username' do
@@ -29,8 +29,8 @@ RSpec.describe DsdaClient::Api do
 
       it { is_expected.to eq('username') }
 
-      context 'development environment' do
-        let(:options) { double(production?: false) }
+      context 'when not production' do
+        let(:production?) { false }
 
         it { is_expected.to eq('dev_username') }
       end
