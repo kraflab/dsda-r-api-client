@@ -8,6 +8,7 @@ RSpec.describe DsdaClient::CommandParser do
   let(:request_hash) { command_parser.instance_variable_get(:@headers) }
 
   before do
+    allow(DsdaClient::Api).to receive(:token).and_return('foo-token')
     allow(DsdaClient::Options).to receive(:production?).and_return(false)
   end
 
@@ -28,8 +29,7 @@ RSpec.describe DsdaClient::CommandParser do
       it 'sets credentials in the header' do
         allow(command_parser).to receive(:parse_instance).and_return(true)
         subject
-        expect(request_hash['API-USERNAME']).not_to be_nil
-        expect(request_hash['API-PASSWORD']).not_to be_nil
+        expect(request_hash['Authorization']).not_to be_nil
       end
 
       let(:request_service) { DsdaClient::RequestService.new }

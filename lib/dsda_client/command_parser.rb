@@ -51,8 +51,7 @@ module DsdaClient
     end
 
     def merge_api_credentials
-      @headers['API-USERNAME'] = DsdaClient::Api.username
-      @headers['API-PASSWORD'] = DsdaClient::Api.password
+      @headers['Authorization'] = "Bearer #{DsdaClient::Api.token}"
     end
 
     def arrayify(object)
