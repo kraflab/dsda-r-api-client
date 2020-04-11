@@ -2,10 +2,19 @@ require 'optparse'
 
 module DsdaClient
   class Options
+    class << self
+      def setup(args)
+        @options = new(args)
+      end
+
+      def options
+        @options
+      end
+    end
+
     def initialize(args)
       @dump_requests = false
       @production = true
-      @request = nil
       parse(args)
     end
 
