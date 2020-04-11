@@ -63,6 +63,7 @@ module DsdaClient
       def prune_raw_data!(obj)
         if obj.is_a?(Hash)
           obj[:data] = '[pruned]' if obj[:data]
+          obj[:password] = '[pruned]' if obj[:password]
         end
         if obj.is_a?(Enumerable)
           obj.each do |element|
