@@ -14,9 +14,9 @@ module DsdaClient
     private
 
     def read_token
-      return unless File.exists?('.token')
+      return unless File.exists?(token_file_name)
 
-      token_data = File.read('.token').split
+      token_data = File.read(token_file_name).split
       token = token_data[0]
       expiration_time = token_data[1]
       return if expiration_time.to_i < Time.now.to_i + TOKEN_REFRESH_PADDING
@@ -32,7 +32,7 @@ module DsdaClient
         exit(1)
       end
 
-      File.write('.token', "#{response['token']} #{response['exp']}")
+      File.write(token_file_name, "#{response['token']} #{response['exp']}")
 
       response['token']
     end
@@ -44,6 +44,10 @@ module DsdaClient
         password: Api.password
       }
       RequestService.new.request(uri, {}, payload)
+    end
+
+    def token_file_name
+      Options.production? ? '.token' : '.token_local'
     end
   end
 end
