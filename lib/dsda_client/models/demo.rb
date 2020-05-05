@@ -7,7 +7,7 @@ module DsdaClient
                    'time', 'level', 'levelstat', 'category', 'recorded_at',
                    'players', 'solo_net'
       allow_keys   'tags', 'compatibility', 'video_link', 'kills', 'items',
-                   'secrets'
+                   'secrets', 'suspect', 'cheated'
     end
   end
 end

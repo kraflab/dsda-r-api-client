@@ -27,6 +27,8 @@ Request:
     "levelstat": "0:28",
     "category": "SM Speed",
     "video_link": "",
+    "suspect": false,
+    "cheated": false,
     "recorded_at": "2002-07-15 20:03:22 -0400",
     "players": [
       "Vincent Catalaa"

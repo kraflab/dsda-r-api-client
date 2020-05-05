@@ -22,6 +22,8 @@ Request:
     "levelstat": "0:28",
     "category": "SM Speed",
     "video_link": "",
+    "suspect": false,
+    "cheated": false,
     "recorded_at": "2002-07-15 20:03:22 -0400",
     "players": [
       "Vincent Catalaa"
@@ -81,6 +83,10 @@ Response:
 `category`: *required*, the run category, without dashes (`UV Speed`, `Pacifist`, `NM 100S`).
 
 `video_link`: *optional*, link to the video on youtube, just the unique string (not the full url).
+
+`suspect`: *optional*, indicates a dubious demo (player history of cheating). Should only be used in serious cases (discuss with the team).
+
+`cheated`: *optional*, indicates a CONFIRMED cheated demo. The player must have admitted to cheating the specific demo or there must be undeniable evidence.
 
 `recorded_at`: *optional*, `datetime` of demo recording (e.g., extracted from .lmp modify time).
 
