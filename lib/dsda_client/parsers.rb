@@ -1,5 +1,6 @@
 require 'dsda_client/parsers/demo'
 require 'dsda_client/parsers/wad'
+require 'dsda_client/parsers/wad_update'
 require 'dsda_client/parsers/player'
 require 'dsda_client/parsers/port'
 require 'dsda_client/parsers/demo_pack'
