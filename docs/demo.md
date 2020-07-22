@@ -24,6 +24,7 @@ Request:
     "video_link": "",
     "suspect": false,
     "cheated": false,
+    "secret_exit": false,
     "recorded_at": "2002-07-15 20:03:22 -0400",
     "players": [
       "Vincent Catalaa"
@@ -87,6 +88,8 @@ Response:
 `suspect`: *optional*, indicates a dubious demo (player history of cheating). Should only be used in serious cases (discuss with the team).
 
 `cheated`: *optional*, indicates a CONFIRMED cheated demo. The player must have admitted to cheating the specific demo or there must be undeniable evidence.
+
+`secret_exit`: *optional*, indicates whether or not the demo uses a secret exit.
 
 `recorded_at`: *optional*, `datetime` of demo recording (e.g., extracted from .lmp modify time).
 

@@ -29,6 +29,7 @@ Request:
     "video_link": "",
     "suspect": false,
     "cheated": false,
+    "secret_exit": false,
     "recorded_at": "2002-07-15 20:03:22 -0400",
     "players": [
       "Vincent Catalaa"
