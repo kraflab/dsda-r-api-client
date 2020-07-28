@@ -14,7 +14,11 @@ class Hash
 
   def includes_all?(keys)
     keys.each do |key|
-      return false if !include?(key)
+      if key.is_a?(Array)
+        key.select { |k| include?(k) }.any?
+      else
+        return false if !include?(key)
+      end
     end
     true
   end

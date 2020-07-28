@@ -7,11 +7,11 @@ module DsdaClient
         end
 
         def required_keys
-          @required_keys ||= {}
+          @required_keys ||= []
         end
 
         def allow_keys(*args)
-          @allowed_keys = args + @required_keys
+          @allowed_keys = (args + @required_keys).flatten
         end
 
         def allowed_keys

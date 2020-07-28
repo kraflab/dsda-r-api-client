@@ -3,7 +3,7 @@ require 'dsda_client/models/base'
 
 RSpec.describe DsdaClient::Models::Base do
   class Klass < described_class
-    require_keys 'author', 'title'
+    require_keys 'author', 'title', ['file', 'file_id']
     allow_keys 'year', 'protagonist'
   end
 
@@ -13,7 +13,8 @@ RSpec.describe DsdaClient::Models::Base do
         'author'      => 'ray bradbury',
         'title'       => 'dandelion wine',
         'year'        => 1957,
-        'protagonist' => 'douglas'
+        'protagonist' => 'douglas',
+        'file_id'     => '1234'
       }
     end
 
