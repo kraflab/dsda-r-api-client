@@ -7,7 +7,7 @@ require 'dsda_client/parsers'
 
 module DsdaClient
   class CommandParser
-    ALLOWED_MODELS = %w[demo wad wad_update player port demo_pack demo_update].freeze
+    ALLOWED_MODELS = %w[demo wad wad_update player player_update port demo_pack demo_update].freeze
 
     def initialize(root_uri)
       @root_uri = root_uri
