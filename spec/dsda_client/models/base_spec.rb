@@ -5,7 +5,14 @@ RSpec.describe DsdaClient::Models::Base do
   class Klass < described_class
     require_keys 'author', 'title', ['file', 'file_id']
     allow_keys 'year', 'protagonist'
+    require_otp
   end
+
+  before do
+    allow(DsdaClient::Options).to receive(:otp).and_return(otp)
+  end
+
+  let(:otp) { 'otp' }
 
   describe '.valid?' do
     let(:valid_hash) do
@@ -36,6 +43,12 @@ RSpec.describe DsdaClient::Models::Base do
       let(:hash) { valid_hash }
 
       it { expect(valid).to eq(true) }
+
+      context 'when missing the otp' do
+        let(:otp) { nil }
+
+        it { is_expected.to eq(false) }
+      end
     end
   end
 

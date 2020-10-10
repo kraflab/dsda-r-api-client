@@ -7,7 +7,7 @@ require 'dsda_client/parsers'
 
 module DsdaClient
   class CommandParser
-    ALLOWED_MODELS = %w[demo wad wad_update player player_update merge_player port demo_pack demo_update otp].freeze
+    ALLOWED_MODELS = %w[demo wad wad_update player player_update merge_player port demo_pack demo_update demo_delete otp].freeze
 
     def initialize(root_uri)
       @root_uri = root_uri
@@ -52,6 +52,7 @@ module DsdaClient
 
     def merge_api_credentials
       @headers['Authorization'] = "Bearer #{DsdaClient::Api.token}"
+      @headers['OTP'] = Options.otp if Options.otp
     end
 
     def arrayify(object)

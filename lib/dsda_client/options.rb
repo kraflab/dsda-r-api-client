@@ -16,11 +16,16 @@ module DsdaClient
       def dump_requests?
         options.dump_requests?
       end
+
+      def otp
+        options.otp
+      end
     end
 
     def initialize(args)
       @dump_requests = false
       @production = true
+      @otp = nil
       parse(args)
     end
 
@@ -32,7 +37,17 @@ module DsdaClient
       @production
     end
 
+    def otp
+      @otp
+    end
+
     private
+
+    def otp_option(parser)
+      parser.on('--otp=OTP', 'Send otp in request') do |otp|
+        @otp = otp.to_s
+      end
+    end
 
     def dump_requests_option(parser)
       parser.on('--dump-requests', 'Dump requests to stdout instead of sending them') do
@@ -58,6 +73,7 @@ module DsdaClient
         parser.banner = "Usage: dsda-client.rb [options]"
         dump_requests_option(parser)
         development_option(parser)
+        otp_option(parser)
         help_option(parser)
       end.parse!(args)
     end

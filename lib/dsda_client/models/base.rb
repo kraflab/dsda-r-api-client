@@ -18,13 +18,22 @@ module DsdaClient
           @allowed_keys ||= required_keys
         end
 
+        def require_otp
+          @require_otp = true
+        end
+
+        def otp_required?
+          @require_otp == true
+        end
+
         def invalid?(raw_hash)
           !valid?(raw_hash)
         end
 
         def valid?(raw_hash)
           raw_hash.includes_only?(allowed_keys) &&
-          raw_hash.includes_all?(required_keys)
+          raw_hash.includes_all?(required_keys) &&
+          (!otp_required? || !Options.otp.nil?)
         end
       end
     end

@@ -70,7 +70,14 @@ module DsdaClient
     end
 
     def request_for_uri(uri)
-      @method == :post ? Net::HTTP::Post.new(uri) : Net::HTTP::Patch.new(uri)
+      case @method
+      when :post
+        Net::HTTP::Post.new(uri)
+      when :delete
+        Net::HTTP::Delete.new(uri)
+      else
+        Net::HTTP::Patch.new(uri)
+      end
     end
 
     def merge_into_header(req, headers)

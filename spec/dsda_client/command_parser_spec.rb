@@ -10,6 +10,7 @@ RSpec.describe DsdaClient::CommandParser do
   before do
     allow(DsdaClient::Api).to receive(:token).and_return('foo-token')
     allow(DsdaClient::Options).to receive(:production?).and_return(false)
+    allow(DsdaClient::Options).to receive(:otp).and_return('otp')
   end
 
   describe '#parse' do
@@ -30,6 +31,7 @@ RSpec.describe DsdaClient::CommandParser do
         allow(command_parser).to receive(:parse_instance).and_return(true)
         subject
         expect(request_hash['Authorization']).not_to be_nil
+        expect(request_hash['OTP']).not_to be_nil
       end
 
       let(:request_service) { DsdaClient::RequestService.new }
