@@ -9,6 +9,7 @@ Request:
     "iwad": "heretic",
     "name": "It's Real And It Kills",
     "short_name": "iraik",
+    "parent": "iraik_new",
     "year": 2018,
     "file": {
       "name": "iraik.zip",

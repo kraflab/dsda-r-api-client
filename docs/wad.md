@@ -8,6 +8,7 @@ Request:
     "iwad": "heretic",
     "name": "It's Real And It Kills",
     "short_name": "iraik",
+    "parent": "iraik_new",
     "year": 2018,
     "file": {
       "name": "iraik.zip",
@@ -41,6 +42,8 @@ Response:
 `name`: *required*, the full name of the wad. E.g., `Back to Saturn X: Episode 1`.
 
 `short_name`: *required*, the short name of the wad, usually the filename. E.g., `btsx_e1`.
+
+`parent`: *optional*, the short name of the latest version of this wad. E.g., `btsx_e1_final`.
 
 `year`: *required*, the year of the wads release (or release of final version).
 
